@@ -1,0 +1,75 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "proteus"
+version = "0.1.0"
+description = "Unified configuration management library for Python"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Luca Di Leo", email = "luca.dileo@example.com"}
+]
+keywords = ["configuration", "config", "settings", "yaml", "json", "design-patterns"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Systems Administration",
+]
+
+dependencies = [
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "black>=23.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0",
+    "types-pyyaml>=6.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/lucadileo9/proteus"
+Documentation = "https://github.com/lucadileo9/proteus#readme"
+Repository = "https://github.com/lucadileo9/proteus"
+Issues = "https://github.com/lucadileo9/proteus/issues"
+
+[tool.hatchling.build.targets.wheel]
+packages = ["src/proteus"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --cov=proteus --cov-report=term-missing"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+include = '\.pyi?$'
+
+[tool.ruff]
+line-length = 88
+target-version = "py38"
+select = ["E", "F", "W", "I", "N", "UP"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
