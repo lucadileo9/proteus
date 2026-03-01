@@ -36,8 +36,7 @@ in isolation. This keeps tests behaviour-focused rather than implementation-focu
 
 ### Abstract Class Enforcement
 
-All abstract classes — `BaseAdapter`, `FormatCreator` — are verified with three
-levels of check:
+All abstract classes — `BaseAdapter`, `FormatCreator` — are verified with three levels of check:
 
 1. Direct instantiation raises `TypeError`.
 2. The correct methods appear in `__abstractmethods__`.
@@ -111,62 +110,6 @@ The ENV format has several non-obvious behaviours that are tested explicitly:
 - **`sort_keys=False`.** Insertion order is preserved on dump. A dedicated test
   writes a dict with keys in `z, a, m` order and verifies they appear in that
   same order in the YAML output.
-
-### Singleton: Thread Safety
-
-`ConfigurationManager` is verified to be thread-safe by creating 20 threads that
-all call the constructor concurrently and collecting the instances:
-
-```python
-threads = [threading.Thread(target=lambda: instances.append(ConfigurationManager())) for _ in range(20)]
-```
-
-All 20 must be the exact same object (`is`, not `==`).
-
-### Singleton: `_destroy()` vs `reset()`
-
-These two housekeeping methods have different contracts and are tested separately:
-
-| Method | Effect |
-|--------|--------|
-| `_destroy()` | Removes the singleton instance — the next call creates a brand-new object. |
-| `reset()` | Clears the loaded configuration but keeps the same instance alive. |
-
-The distinction matters: code that holds a reference to the manager before
-`reset()` will still work; code that holds a reference before `_destroy()` will
-be holding a stale object.
-
-### Deep Merge
-
-`_deep_merge(base, override)` is tested with two properties:
-
-1. **Correctness** — nested keys from `override` win, untouched keys from `base`
-   are preserved.
-2. **Non-mutation** — `base` is not modified in place. This is tested by
-   asserting that `base` equals its original value after the call.
-
-Both are necessary: correctness is obvious, but non-mutation is easy to miss and
-would produce subtle bugs when `base` is the manager's live configuration dict.
-
-### Cross-Format Translation (`test_formats.py`)
-
-The most interesting integration tests are in `TestCrossFormatTranslation`. They
-simulate the exact workflow `ConfigurationManager.translate()` performs internally:
-read with one factory's reader, write with another factory's writer. Five
-combinations are covered (JSON↔YAML, JSON→ENV, YAML→ENV). These tests validate
-that the Factory Method abstraction actually works end-to-end, not just that
-`create_reader()` returns the right type.
-
-### Custom Creator Registration
-
-`TestRegisterCreator` defines a minimal `DummyCreator` for a `.dummy` extension
-inline, registers it, and verifies that `load()` succeeds with the new format.
-This tests the open/closed aspect of the design: adding a new format requires no
-changes to the manager, only a new `FormatCreator` subclass.
-
-A second test verifies that registering a creator for an already-known extension
-(`.json`) replaces the old one, which is useful for overriding default behaviour
-in tests or production integrations.
 
 ### Unicode
 
