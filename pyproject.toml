@@ -29,6 +29,7 @@ classifiers = [
 
 dependencies = [
     "pyyaml>=6.0",
+    "python-dotenv>=1.0",
 ]
 
 [project.optional-dependencies]
@@ -52,6 +53,7 @@ packages = ["src/proteus"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["tests"]
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
