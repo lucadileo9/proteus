@@ -1,0 +1,13 @@
+# Production overrides — merge on top of app.yaml
+debug: false
+
+server:
+  host: 0.0.0.0
+
+database:
+  host: prod-db.example.com
+  password: "pr0d!S3cret"
+
+logging:
+  level: WARNING
+  file: /var/log/app/production.log
