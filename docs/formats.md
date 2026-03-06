@@ -1,6 +1,6 @@
 # Format Creators
 
-> **GoF Pattern: Factory Method** — Each creator encapsulates the construction of a reader/writer pair for a specific format.
+> **GoF Pattern:  Abstract Factory** — Each creator encapsulates the construction of a reader/writer pair for a specific format.
 
 ## Overview
 
@@ -13,7 +13,7 @@ reader/writer classes (Dependency Inversion Principle).
 
 Defined in `src/proteus/formats/base_format.py`.
 
-| Factory Method | Returns | Description |
+| Abstract Factory Method | Returns | Description |
 |----------------|---------|-------------|
 | `create_reader()` | `BaseReader` | Instantiates the format-specific reader. |
 | `create_writer()` | `BaseWriter` | Instantiates the format-specific writer. |

@@ -47,8 +47,8 @@ flowchart TD
     ER & EW --> EA[EnvAdapter wraps: python-dotenv]
 ```
 
-### Factory Method: FormatCreator
-`ConfigurationManager` uses the Factory Method pattern to select the appropriate `FormatCreator` based on file extension. Each `FormatCreator` knows how to create its own Reader and Writer, which in turn use Adapters to interact with third-party libraries.
+### Abstract Factory Method: FormatCreator
+`ConfigurationManager` uses the Abstract Factory pattern to select the appropriate `FormatCreator` based on file extension. Each `FormatCreator` knows how to create its own Reader and Writer, which in turn use Adapters to interact with third-party libraries.
 
 ```mermaid
 classDiagram
@@ -91,7 +91,7 @@ classDiagram
     EnvFormatCreator ..> EnvReader : creates
     EnvFormatCreator ..> EnvWriter : creates
 
-    note for FormatCreator "FACTORY METHOD (GoF):
+    note for FormatCreator "ABSTRACT FACTORY (GoF):
     create_reader() and create_writer()
     are the two abstract factory methods.
     Purpose: couple the Reader+Writer
