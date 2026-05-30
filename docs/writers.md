@@ -30,8 +30,9 @@ Defined in `src/proteus/writers/base.py`.
 
 Each concrete writer:
 
-1. Creates its adapter in `__init__`.
-2. Implements `_serialize(data)` by calling `self._adapter.dump(data)`.
+1. Accepts an optional adapter in `__init__`.
+2. Falls back to the built-in adapter when none is injected.
+3. Implements `_serialize(data)` by calling `self._adapter.dump(data)`.
 
 ## Errors
 
@@ -48,6 +49,15 @@ from proteus.writers.json_writer import JSONWriter
 
 writer = JSONWriter()
 writer.write({"debug": True, "port": 8080}, "output.json")
+```
+
+If you need custom serialization behavior, inject a custom adapter:
+
+```python
+from proteus.writers.json_writer import JSONWriter
+from my_adapters import MyJSONAdapter
+
+writer = JSONWriter(adapter=MyJSONAdapter())
 ```
 
 > **Note:** Prefer `ConfigurationManager.translate()` for format conversion —

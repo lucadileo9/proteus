@@ -34,8 +34,9 @@ Defined in `src/proteus/readers/base.py`.
 
 Each concrete reader:
 
-1. Creates its adapter in `__init__`.
-2. Implements `_parse_content(raw)` by calling `self._adapter.load(raw)`.
+1. Accepts an optional adapter in `__init__`.
+2. Falls back to the built-in adapter when none is injected.
+3. Implements `_parse_content(raw)` by calling `self._adapter.load(raw)`.
 
 No other method needs overriding.
 
@@ -54,6 +55,15 @@ from proteus.readers.json_reader import JSONReader
 reader = JSONReader()
 data = reader.parse("config.json")
 print(data)  # {'database': {'host': 'localhost', ...}}
+```
+
+If you need custom parsing behavior, inject a custom adapter:
+
+```python
+from proteus.readers.json_reader import JSONReader
+from my_adapters import MyJSONAdapter
+
+reader = JSONReader(adapter=MyJSONAdapter())
 ```
 
 > **Note:** In most cases you should use `ConfigurationManager.load()` instead
