@@ -291,8 +291,9 @@ class ConfigurationManager:
     # Deep-merge helper                                                   #
     # ------------------------------------------------------------------ #
 
-    @staticmethod
+    @classmethod
     def _deep_merge(
+        cls,
         base: Dict[str, Any],
         override: Dict[str, Any],
     ) -> Dict[str, Any]:
@@ -310,7 +311,7 @@ class ConfigurationManager:
                 and isinstance(value, dict) # and the value in the override is also a dict
             ):
                 # recursively merge the nested dictionaries
-                result[key] = ConfigurationManager._deep_merge(
+                result[key] = cls._deep_merge(
                     result[key], value
                 )
             else:
