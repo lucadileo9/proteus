@@ -13,7 +13,6 @@ IR: Dict[str, str] — all values are strings (inherent to the format).
 """
 
 import io
-import shlex
 from typing import Any, Dict
 
 from dotenv import dotenv_values
