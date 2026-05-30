@@ -31,6 +31,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from .exceptions import (
     ConfigurationNotLoadedError,
+    InvalidKeyError,
     UnsupportedFormatError,
 )
 from .formats.base_format import FormatCreator
@@ -197,8 +198,10 @@ class ConfigurationManager:
             The configuration value, or *default*.
 
         Raises:
+            InvalidKeyError: If the key is empty or malformed.
             ConfigurationNotLoadedError: If no file has been loaded yet.
         """
+        self._validate_key(key)
         if not self._config:
             raise ConfigurationNotLoadedError(
                 "No configuration loaded. Call load() first."
@@ -214,10 +217,10 @@ class ConfigurationManager:
         return value
 
     def get_all(self) -> Dict[str, Any]:
-        """Return a shallow copy of the entire IR."""
-        return self._config.copy()
+        """Return a deep copy of the entire IR."""
+        return copy.deepcopy(self._config)
 
-    def translate(self, input_path: str, output_path: str) -> None:
+    def translate(self, input_path: Union[str, Path], output_path: Union[str, Path]) -> None:
         """
         Convert a configuration file from one format to another.
 
@@ -227,7 +230,7 @@ class ConfigurationManager:
         2. **Factory Method** — ``_get_creator()`` selects creators.
         3. **Template Method** — ``reader.parse()`` / ``writer.write()``.
         4. **Adapter** — ``load()`` / ``dump()`` inside readers/writers.
-        5. **Singleton** — the client calls this on a unique instance.
+        5. **Optional Singleton** — the client can call this on the shared manager if desired.
 
         Args:
             input_path:  Path to the source file.
@@ -314,3 +317,11 @@ class ConfigurationManager:
                 # instead if the key doesn't exist in the base, or either value is not a dict, override it directly
                 result[key] = value
         return result
+
+    @staticmethod
+    def _validate_key(key: str) -> None:
+        """Reject empty or malformed dot-notation keys."""
+        if not isinstance(key, str) or not key.strip():
+            raise InvalidKeyError("Key must be a non-empty string")
+        if key.startswith(".") or key.endswith(".") or ".." in key:
+            raise InvalidKeyError(f"Key '{key}' is not valid")
