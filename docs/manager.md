@@ -105,6 +105,11 @@ patterns collaborate:
 4. **Adapter** — `load()` / `dump()` inside readers/writers.
 5. **Optional Singleton** — the client can call this on `ConfigurationManager.instance()` if a shared manager is desired.
 
+### `translate_and_load(input_path: str, output_path: str) → None`
+
+Translate a file and then load the translated output into the current IR.
+Use this when you want the converted file to become part of the manager state.
+
 
 ### `register_creator(creator: FormatCreator) → None`
 

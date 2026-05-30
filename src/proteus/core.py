@@ -245,6 +245,16 @@ class ConfigurationManager:
         data = reader.parse(input_path) # parse the input file to get the configuration data as a dictionary
         writer.write(data, output_path) # write the configuration data to the output file in the new format
 
+    def translate_and_load(self, input_path: str, output_path: str) -> None:
+        """
+        Translate a configuration file and then load the translated output.
+
+        This is useful when you want the conversion result to become part of
+        the manager state immediately after the file is written.
+        """
+        self.translate(input_path, output_path)
+        self.load(output_path)
+
     # ------------------------------------------------------------------ #
     # Housekeeping                                                        #
     # ------------------------------------------------------------------ #
