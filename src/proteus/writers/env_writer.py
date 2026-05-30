@@ -4,8 +4,9 @@ Concrete writer for .env files.
 Delegates serialization to ``EnvAdapter`` — contains no direct ``dotenv`` usage.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
+from ..adapters.base import BaseAdapter
 from .base import BaseWriter
 from ..adapters.env_adapter import EnvAdapter
 
@@ -18,8 +19,8 @@ class EnvWriter(BaseWriter):
     All .env-specific serialization logic lives in the adapter, not here.
     """
 
-    def __init__(self) -> None:
-        self._adapter = EnvAdapter()
+    def __init__(self, adapter: Optional[BaseAdapter] = None) -> None:
+        self._adapter = adapter or EnvAdapter()
 
     def _serialize(self, data: Dict[str, Any]) -> str:
         """Delegate to EnvAdapter.dump()."""
