@@ -7,6 +7,7 @@ Couples ``EnvReader`` and ``EnvWriter``, both backed by the same
 
 from typing import List
 
+from ..adapters.env_adapter import EnvAdapter
 from .base_format import FormatCreator
 from ..readers.env_reader import EnvReader
 from ..writers.env_writer import EnvWriter
@@ -20,13 +21,16 @@ class EnvFormatCreator(FormatCreator):
     Handles the ``.env`` extension.
     """
 
+    def __init__(self) -> None:
+        self._adapter = EnvAdapter()
+
     def create_reader(self) -> EnvReader:
         """Return a new ``EnvReader`` instance."""
-        return EnvReader()
+        return EnvReader(adapter=self._adapter)
 
     def create_writer(self) -> EnvWriter:
         """Return a new ``EnvWriter`` instance."""
-        return EnvWriter()
+        return EnvWriter(adapter=self._adapter)
 
     def get_extensions(self) -> List[str]:
         """ENV uses a single extension."""
