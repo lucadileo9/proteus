@@ -281,6 +281,18 @@ class TestTranslate:
         with pytest.raises(FileNotFoundError):
             mgr.translate(str(tmp_path / "ghost.yaml"), dst)
 
+    def test_translate_and_load_updates_state(self, json_file, tmp_path):
+        """translate_and_load() writes output and loads the translated file into state."""
+        output = tmp_path / "translated.yaml"
+
+        mgr = ConfigurationManager()
+        mgr.translate_and_load(json_file, str(output))
+
+        assert output.exists()
+        assert mgr.get("database.host") == "localhost"
+        assert len(mgr.loaded_files()) == 1
+        assert str(output.resolve()) in mgr.loaded_files()[0]
+
 
 # ================================================================== #
 # Context manager                                                     #

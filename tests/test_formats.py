@@ -106,6 +106,12 @@ class TestJSONFormatCreator:
         reader = self.creator.create_reader()
         assert isinstance(reader._adapter, JSONAdapter)
 
+    def test_reader_and_writer_share_adapter(self):
+        """Reader and writer created by the same creator share one adapter instance."""
+        reader = self.creator.create_reader()
+        writer = self.creator.create_writer()
+        assert reader._adapter is writer._adapter
+
     def test_writer_has_json_adapter(self):
         """The created writer uses a JSONAdapter internally."""
         writer = self.creator.create_writer()
@@ -190,6 +196,12 @@ class TestYAMLFormatCreator:
         reader = self.creator.create_reader()
         assert isinstance(reader._adapter, YAMLAdapter)
 
+    def test_reader_and_writer_share_adapter(self):
+        """Reader and writer created by the same creator share one adapter instance."""
+        reader = self.creator.create_reader()
+        writer = self.creator.create_writer()
+        assert reader._adapter is writer._adapter
+
     def test_writer_has_yaml_adapter(self):
         """The created writer uses a YAMLAdapter internally."""
         writer = self.creator.create_writer()
@@ -267,6 +279,12 @@ class TestEnvFormatCreator:
         """The created reader uses an EnvAdapter internally."""
         reader = self.creator.create_reader()
         assert isinstance(reader._adapter, EnvAdapter)
+
+    def test_reader_and_writer_share_adapter(self):
+        """Reader and writer created by the same creator share one adapter instance."""
+        reader = self.creator.create_reader()
+        writer = self.creator.create_writer()
+        assert reader._adapter is writer._adapter
 
     def test_writer_has_env_adapter(self):
         """The created writer uses an EnvAdapter internally."""
