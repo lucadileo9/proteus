@@ -68,6 +68,13 @@ class TestJSONReaderParse:
         assert result["città"] == "Roma"
         assert result["名前"] == "太郎"
 
+    def test_parse_path_object(self, tmp_path):
+        """parse() accepts pathlib.Path objects."""
+        path = tmp_path / "path.json"
+        path.write_text('{"key": "value"}', encoding="utf-8")
+        result = self.reader.parse(path)
+        assert result == {"key": "value"}
+
     # ------------------------------------------------------------------ #
     # Template Method — _validate() errors                                #
     # ------------------------------------------------------------------ #

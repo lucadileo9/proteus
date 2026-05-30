@@ -81,6 +81,12 @@ class TestJSONWriterWrite:
         parsed = json.loads(content)
         assert parsed == {"new": "data"}
 
+    def test_write_path_object(self, tmp_path):
+        """write() accepts pathlib.Path objects."""
+        path = tmp_path / "output.json"
+        self.writer.write(SAMPLE_NESTED, path)
+        assert path.exists()
+
     # ------------------------------------------------------------------ #
     # Round-trip with JSONReader                                          #
     # ------------------------------------------------------------------ #

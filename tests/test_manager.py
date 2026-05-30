@@ -14,6 +14,7 @@ Covers:
 
 import json
 import threading
+from pathlib import Path
 
 import pytest
 import yaml
@@ -21,6 +22,7 @@ import yaml
 from proteus.core import ConfigurationManager
 from proteus.exceptions import (
     ConfigurationNotLoadedError,
+    InvalidKeyError,
     UnsupportedFormatError,
 )
 from proteus.formats.base_format import FormatCreator
@@ -145,15 +147,33 @@ class TestLoadAndGet:
         with pytest.raises(ConfigurationNotLoadedError, match="No configuration loaded"):
             mgr.get("any.key")
 
+    def test_get_invalid_key_raises(self):
+        """get() raises InvalidKeyError for malformed keys."""
+        mgr = ConfigurationManager()
+        mgr._config = {"a": 1}
+
+        for invalid in ("", " ", ".a", "a.", "a..b"):
+            with pytest.raises(InvalidKeyError):
+                mgr.get(invalid)
+
     def test_get_all(self, json_file):
         """get_all() returns a deep copy of the entire configuration."""
         mgr = ConfigurationManager()
         mgr.load(json_file)
         all_cfg = mgr.get_all()
         assert all_cfg == SAMPLE_NESTED
-        # Must be a copy
+        # Must be a deep copy
         all_cfg["extra"] = True
         assert "extra" not in mgr.get_all()
+
+    def test_get_all_nested_mutation_does_not_leak(self, json_file):
+        """Nested mutation on get_all() result does not affect manager state."""
+        mgr = ConfigurationManager()
+        mgr.load(json_file)
+        all_cfg = mgr.get_all()
+        all_cfg["database"]["host"] = "HACKED"
+
+        assert mgr.get("database.host") == "localhost"
 
     def test_loaded_files(self, json_file):
         """loaded_files() returns a list of all files loaded so far."""
@@ -281,6 +301,27 @@ class TestTranslate:
         with pytest.raises(FileNotFoundError):
             mgr.translate(str(tmp_path / "ghost.yaml"), dst)
 
+    def test_translate_accepts_path_objects(self, json_file, tmp_path):
+        """translate() accepts pathlib.Path objects for both paths."""
+        src = Path(json_file)
+        dst = tmp_path / "output.yaml"
+
+        mgr = ConfigurationManager()
+        mgr.translate(src, dst)
+
+        assert dst.exists()
+
+    def test_translate_and_load_accepts_path_objects(self, json_file, tmp_path):
+        """translate_and_load() accepts pathlib.Path objects for both paths."""
+        src = Path(json_file)
+        dst = tmp_path / "output.yaml"
+
+        mgr = ConfigurationManager()
+        mgr.translate_and_load(src, dst)
+
+        assert dst.exists()
+        assert mgr.get("database.host") == "localhost"
+
     def test_translate_and_load_updates_state(self, json_file, tmp_path):
         """translate_and_load() writes output and loads the translated file into state."""
         output = tmp_path / "translated.yaml"
@@ -309,6 +350,11 @@ class TestContextManager:
 
         assert mgr.get_all() == {}
         assert mgr.loaded_files() == []
+
+    def test_temporary_accepts_path_objects(self, json_file):
+        with ConfigurationManager.temporary() as mgr:
+            mgr.load(Path(json_file))
+            assert mgr.get("database.host") == "localhost"
 
 
 # ================================================================== #
