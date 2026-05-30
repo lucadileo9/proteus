@@ -12,7 +12,7 @@ abstract method (`_serialize`) that delegates to the matching Adapter.
 
 Defined in `src/proteus/writers/base.py`.
 
-### Template Method — `write(data: Dict[str, Any], filepath: str) → None`
+### Template Method — `write(data: Dict[str, Any], filepath: str | Path) → None`
 
 | Step | Method | Override? | Description |
 |------|--------|-----------|-------------|
@@ -62,3 +62,7 @@ writer = JSONWriter(adapter=MyJSONAdapter())
 
 > **Note:** Prefer `ConfigurationManager.translate()` for format conversion —
 > it handles reader + writer coordination automatically.
+
+### Path Support
+
+`write()` accepts either a string path or a `pathlib.Path` object.

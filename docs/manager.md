@@ -62,7 +62,7 @@ sequenceDiagram
 
 ## Public API
 
-### `load(filepath: str) → None`
+### `load(filepath: str | Path) → None`
 
 Load a configuration file and **deep-merge** it into the current IR.
 Values from the new file win on conflict.
@@ -73,7 +73,7 @@ Values from the new file win on conflict.
 | `FileNotFoundError` | File does not exist. |
 | `ValueError` | Content cannot be parsed. |
 
-### `merge(filepath: str) → None`
+### `merge(filepath: str | Path) → None`
 
 Alias for `load()` — semantically clearer when merging multiple sources.
 
@@ -89,12 +89,14 @@ config.get("missing.key", "N/A")  # returns default
 
 Raises `ConfigurationNotLoadedError` if no file has been loaded yet.
 
+Raises `InvalidKeyError` if the key is empty or malformed (for example `""`, `".a"`, `"a..b"`).
+
 
 ### `get_all() → Dict[str, Any]`
 
-Returns a shallow copy of the entire IR.
+Returns a deep copy of the entire IR, so callers cannot mutate the internal configuration through the returned value.
 
-### `translate(input_path: str, output_path: str) → None`
+### `translate(input_path: str | Path, output_path: str | Path) → None`
 
 Convert a file from one format to another. This is where all five
 patterns collaborate:
@@ -105,7 +107,7 @@ patterns collaborate:
 4. **Adapter** — `load()` / `dump()` inside readers/writers.
 5. **Optional Singleton** — the client can call this on `ConfigurationManager.instance()` if a shared manager is desired.
 
-### `translate_and_load(input_path: str, output_path: str) → None`
+### `translate_and_load(input_path: str | Path, output_path: str | Path) → None`
 
 Translate a file and then load the translated output into the current IR.
 Use this when you want the converted file to become part of the manager state.
@@ -135,6 +137,10 @@ with ConfigurationManager.temporary() as config:
 
 When the context exits, the manager resets its internal state.
 
+### Path Support
+
+All path-based methods accept both strings and `pathlib.Path` objects.
+
 ### `loaded_files() → List[str]`
 
 Returns a copy of the list of loaded file paths (resolved to absolute).
@@ -160,7 +166,7 @@ config.get_all()
 |-----------|-------------|
 | `ConfigurationError` | Base class for all Proteus exceptions. |
 | `UnsupportedFormatError` | No creator registered for the file extension. |
-| `InvalidKeyError` | Reserved for future use. |
+| `InvalidKeyError` | Raised when a dot-notation key is empty or malformed. |
 | `ConfigurationNotLoadedError` | `get()` called before any `load()`. |
 
 All exceptions are importable from the `proteus` package.

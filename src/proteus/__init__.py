@@ -2,7 +2,7 @@
 Proteus — Unified configuration management and translation library.
 
 Design patterns implemented:
-    - **Singleton**:       ``ConfigurationManager`` (unique global instance)
+    - **Optional Singleton**: ``ConfigurationManager.instance()`` (shared global instance when needed)
     - **Facade**:          ``ConfigurationManager`` (simplified public API)
     - **Factory Method**:  ``FormatCreator`` (reader/writer pair creation)
     - **Template Method**: ``BaseReader`` / ``BaseWriter`` (fixed algorithms)
@@ -16,6 +16,8 @@ Quick start::
     config.load("settings.yaml")
     print(config.get("database.host"))
     config.translate("settings.yaml", "settings.json")
+    with ConfigurationManager.temporary() as temp:
+        temp.load("settings.yaml")
 """
 
 from .adapters.base import BaseAdapter

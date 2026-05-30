@@ -12,7 +12,7 @@ Every reader follows the same four-step algorithm defined by
 
 Defined in `src/proteus/readers/base.py`.
 
-### Template Method — `parse(filepath: str) → Dict[str, Any]`
+### Template Method — `parse(filepath: str | Path) → Dict[str, Any]`
 
 | Step | Method | Override? | Description |
 |------|--------|-----------|-------------|
@@ -68,3 +68,7 @@ reader = JSONReader(adapter=MyJSONAdapter())
 
 > **Note:** In most cases you should use `ConfigurationManager.load()` instead
 > of readers directly — the manager selects the correct reader automatically.
+
+### Path Support
+
+`parse()` accepts either a string path or a `pathlib.Path` object.

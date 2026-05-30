@@ -4,7 +4,7 @@
 
 
 
-Proteus is a Python library that provides a clean, pattern-based approach to managing application configurations. It allows you to load settings from multiple formats (JSON, YAML) and access them through a unified interface, regardless of the source format.
+Proteus is a Python library that provides a clean, pattern-based approach to managing application configurations. It allows you to load settings from multiple formats (JSON, YAML, ENV) and access them through a unified interface, regardless of the source format.
 
 
 ---
@@ -71,21 +71,23 @@ Proteus is built on a foundation of proven design patterns from the Gang of Four
 `ConfigurationManager.temporary()` creates a short-lived manager for `with` blocks, automatically resetting state when the block ends.
 
 ### **Facade Pattern**
-Simple methods like `load()` and `get()` hide the complexity of parser creation, file validation, and data normalization.
+Simple methods like `load()`, `get()`, `translate()`, and `translate_and_load()` hide the complexity of reader creation, file validation, and data normalization.
 
 ### **Factory Method Pattern**
-`ConfigParserFactory` automatically selects and instantiates the appropriate parser based on file extension, making format detection transparent.
+`FormatCreator` automatically selects and instantiates the appropriate reader/writer pair based on file extension, making format detection transparent.
 
 ### **Template Method Pattern**
-`BaseParser` defines a fixed algorithm (validate → read → parse → normalize) while allowing subclasses to customize specific steps.
+`BaseReader` and `BaseWriter` define fixed algorithms (validate → read → parse and validate → serialize → write) while allowing subclasses to customize only the format-specific steps.
 
 ### **Adapter Pattern**
-Each parser adapts its specific format into a unified internal representation, so the manager works with consistent data structures.
+Each adapter converts a specific format into a unified internal representation, so the manager works with consistent data structures.
 
 For detailed architecture documentation and diagrams, see:
-- [PROJECT_OVERVIEW.md](PROJECT_OVERVIEW.md) - Comprehensive architecture explanation
-- [ARCHITECTURE_DIAGRAMS.md](ARCHITECTURE_DIAGRAMS.md) - Visual diagrams (Class, Sequence, Component, etc.)
-- [ROADMAP.md](ROADMAP.md) - Implementation phases and development plan
+- [docs/architecture.md](docs/architecture.md) - Comprehensive architecture explanation
+- [docs/manager.md](docs/manager.md) - Manager behavior and API details
+- [docs/formats.md](docs/formats.md) - Reader/writer factory details
+- [docs/readers.md](docs/readers.md) - Template Method reader behavior
+- [docs/writers.md](docs/writers.md) - Template Method writer behavior
 
 ---
 
@@ -100,7 +102,7 @@ proteus/
 │   ├── core.py            # ConfigurationManager
 │   ├── exceptions.py      # Custom exceptions
 │   ├── adapters/          # Format adapters
-│   ├── formats/           # Factory Method creators
+│   ├── formats/           # Creator classes for readers/writers
 │   ├── readers/           # Template Method readers
 │   └── writers/           # Template Method writers
 ├── examples/             # Usage examples
@@ -113,6 +115,26 @@ proteus/
 - **Python**: 3.8 or higher
 - **Runtime Dependencies**: `pyyaml>=6.0`
 - **Development** (optional): `pytest`, `black`, `ruff`, `mypy`
+
+### Practical Examples
+
+```python
+from pathlib import Path
+from proteus import ConfigurationManager
+
+config = ConfigurationManager.temporary()
+config.load(Path("config_examples/app.yaml"))
+config.translate_and_load(Path("config_examples/app.yaml"), Path("config_examples/output/app.json"))
+print(config.get("database.host"))
+```
+
+```python
+from proteus import ConfigurationManager
+
+with ConfigurationManager.temporary() as config:
+	config.load("config_examples/app.yaml")
+	print(config.get("server.port"))
+```
 
 
 ---
