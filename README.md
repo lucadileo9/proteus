@@ -36,7 +36,26 @@ pip install -e .
 
 ### Basic Usage
 
-To do...
+```python
+from proteus import ConfigurationManager
+
+config = ConfigurationManager()
+config.load("config_examples/app.yaml")
+
+print(config.get("app_name"))
+print(config.get("database.host"))
+print(config.get("server.port"))
+```
+
+Example output:
+
+```text
+proteus-demo
+localhost
+8080
+```
+
+For a shared application-wide instance, use `ConfigurationManager.instance()`.
 
 
 ---
@@ -47,6 +66,9 @@ Proteus is built on a foundation of proven design patterns from the Gang of Four
 
 ### **Optional Singleton Pattern**
 `ConfigurationManager.instance()` provides a single, global point of access to configuration when you want shared state, while direct construction still gives isolated instances.
+
+### **Context Manager**
+`ConfigurationManager.temporary()` creates a short-lived manager for `with` blocks, automatically resetting state when the block ends.
 
 ### **Facade Pattern**
 Simple methods like `load()` and `get()` hide the complexity of parser creation, file validation, and data normalization.
@@ -75,13 +97,12 @@ For detailed architecture documentation and diagrams, see:
 ```
 proteus/
 ├── src/proteus/           # Source code
-│   ├── core.py           # ConfigurationManager
-│   ├── factory.py        # Parser factory
-│   ├── exceptions.py     # Custom exceptions
-│   └── parsers/          # Parser implementations
-│       ├── base.py       # Abstract base parser
-│       ├── json_parser.py
-│       └── yaml_parser.py
+│   ├── core.py            # ConfigurationManager
+│   ├── exceptions.py      # Custom exceptions
+│   ├── adapters/          # Format adapters
+│   ├── formats/           # Factory Method creators
+│   ├── readers/           # Template Method readers
+│   └── writers/           # Template Method writers
 ├── examples/             # Usage examples
 ├── config_examples/      # Sample configuration files
 └── docs/                 # Documentation
