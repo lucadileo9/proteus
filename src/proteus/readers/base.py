@@ -12,7 +12,7 @@ Subclasses override only ``_parse_content()``, delegating to their Adapter.
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 
 class BaseReader(ABC):
@@ -32,7 +32,7 @@ class BaseReader(ABC):
     # Template Method (public — do NOT override)                          #
     # ------------------------------------------------------------------ #
 
-    def parse(self, filepath: str) -> Dict[str, Any]:
+    def parse(self, filepath: Union[str, Path]) -> Dict[str, Any]:
         """
         Template method — fixed parsing algorithm.
 
@@ -56,7 +56,7 @@ class BaseReader(ABC):
     # Common steps (hooks — override only if truly needed)                #
     # ------------------------------------------------------------------ #
 
-    def _validate(self, filepath: str) -> None:
+    def _validate(self, filepath: Union[str, Path]) -> None:
         """Step 1 — verify that the file exists and is a regular file."""
         path = Path(filepath)
         if not path.exists():
@@ -64,7 +64,7 @@ class BaseReader(ABC):
         if not path.is_file():
             raise ValueError(f"Not a regular file: {filepath}")
 
-    def _read_file(self, filepath: str) -> str:
+    def _read_file(self, filepath: Union[str, Path]) -> str:
         """Step 2 — read the full file content as UTF-8 text."""
         return Path(filepath).read_text(encoding="utf-8")
 

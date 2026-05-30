@@ -24,9 +24,10 @@ Typical usage::
     config.translate("base.yaml", "base.json")   # format conversion
 """
 
+import copy
 import threading
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from .exceptions import (
     ConfigurationNotLoadedError,
@@ -130,7 +131,7 @@ class ConfigurationManager:
         for ext in creator.get_extensions():
             self._creators[ext] = creator
 
-    def _get_creator(self, filepath: str) -> FormatCreator:
+    def _get_creator(self, filepath: Union[str, Path]) -> FormatCreator:
         """
         Select the FormatCreator whose extensions match *filepath*.
 
@@ -157,7 +158,7 @@ class ConfigurationManager:
     # Facade — public API                                                 #
     # ------------------------------------------------------------------ #
 
-    def load(self, filepath: str) -> None:
+    def load(self, filepath: Union[str, Path]) -> None:
         """
         Load a configuration file and deep-merge it into the IR.
 
@@ -175,7 +176,7 @@ class ConfigurationManager:
         self._config = self._deep_merge(self._config, new_config) # deep-merge the new configuration into the existing one
         self._loaded_files.append(str(Path(filepath).resolve())) # track the loaded file (store absolute path for clarity)
 
-    def merge(self, filepath: str) -> None:
+    def merge(self, filepath: Union[str, Path]) -> None:
         """
         Alias for ``load()`` — semantically clearer for explicit merges.
 
@@ -202,6 +203,7 @@ class ConfigurationManager:
             raise ConfigurationNotLoadedError(
                 "No configuration loaded. Call load() first."
             )
+
         parts = key.split(".")
         value: Any = self._config
         for part in parts:
@@ -245,7 +247,7 @@ class ConfigurationManager:
         data = reader.parse(input_path) # parse the input file to get the configuration data as a dictionary
         writer.write(data, output_path) # write the configuration data to the output file in the new format
 
-    def translate_and_load(self, input_path: str, output_path: str) -> None:
+    def translate_and_load(self, input_path: Union[str, Path], output_path: Union[str, Path]) -> None:
         """
         Translate a configuration file and then load the translated output.
 

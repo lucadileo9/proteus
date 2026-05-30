@@ -11,7 +11,7 @@ Subclasses override only ``_serialize()``, delegating to their Adapter.
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 
 class BaseWriter(ABC):
@@ -31,7 +31,7 @@ class BaseWriter(ABC):
     # Template Method (public — do NOT override)                          #
     # ------------------------------------------------------------------ #
 
-    def write(self, data: Dict[str, Any], filepath: str) -> None:
+    def write(self, data: Dict[str, Any], filepath: Union[str, Path]) -> None:
         """
         Template method — fixed writing algorithm.
 
@@ -52,7 +52,7 @@ class BaseWriter(ABC):
     # Common steps (hooks — override only if truly needed)                #
     # ------------------------------------------------------------------ #
 
-    def _validate(self, data: Dict[str, Any], filepath: str) -> None:
+    def _validate(self, data: Dict[str, Any], filepath: Union[str, Path]) -> None:
         """Step 1 — verify data type and that the parent directory exists."""
         if not isinstance(data, dict):
             raise TypeError(
@@ -85,6 +85,6 @@ class BaseWriter(ABC):
     # Hook (optional override)                                            #
     # ------------------------------------------------------------------ #
 
-    def _write_file(self, content: str, filepath: str) -> None:
+    def _write_file(self, content: str, filepath: Union[str, Path]) -> None:
         """Step 3 — write content to disk as UTF-8 text."""
         Path(filepath).write_text(content, encoding="utf-8")
