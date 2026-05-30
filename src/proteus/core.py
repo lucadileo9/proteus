@@ -1,11 +1,12 @@
 """
-ConfigurationManager — Singleton + Facade.
+ConfigurationManager — Facade with optional Singleton support.
 
 This is the central entry point of the Proteus library.
 
-Singleton pattern:
-    ``__new__`` with double-check locking guarantees that only one
-    instance exists, even under multi-threaded access.
+Optional Singleton pattern:
+    ``instance()`` returns a shared, thread-safe singleton when a
+    global manager is desired. Direct construction via ``ConfigurationManager()``
+    returns a regular independent instance.
 
 Facade pattern:
     ``load()``, ``get()``, ``merge()``, ``translate()`` hide the full
@@ -39,7 +40,7 @@ from .formats.yaml_format import YAMLFormatCreator
 
 class ConfigurationManager:
     """
-    Singleton + Facade for unified configuration management.
+    Facade for unified configuration management with optional Singleton access.
 
     Responsibilities:
         - Maintain a single global configuration state (IR: ``Dict``)
@@ -50,11 +51,11 @@ class ConfigurationManager:
         - Translate between formats
 
     Design-pattern roles:
-        **Singleton** – ``__new__`` with ``threading.Lock``
+        **Singleton** – ``instance()`` with ``threading.Lock``
         **Facade**    – public methods encapsulate the entire pattern stack
     """
 
-    # These are class-level attributes to enforce the singleton pattern.
+    # These are class-level attributes for the optional singleton access.
     _instance: Optional["ConfigurationManager"] = None # this represents the single instance of the class, initially None
     _lock: threading.Lock = threading.Lock() # lock to ensure thread-safe singleton creation
 
@@ -62,39 +63,31 @@ class ConfigurationManager:
     # Singleton                                                           #
     # ------------------------------------------------------------------ #
 
-    def __new__(cls) -> "ConfigurationManager":
+    @classmethod
+    def instance(cls) -> "ConfigurationManager":
         """
-        Singleton with double-check locking for thread safety.
+        Return a shared singleton instance with double-check locking.
 
         First check is lock-free (fast path for the common case).
         Second check (inside the lock) prevents race conditions.
 
-        N.B. The method __new__ is responsible for creating the instance, it is called
-        before __init__. If the instance already exists, it returns that instance instead of creating a new one.
+        Direct construction via ``ConfigurationManager()`` remains available
+        for callers that want isolated instances.
         """
-        if cls._instance is None: # chech if instance already exists (fast path)
+        if cls._instance is None: # check if instance already exists (fast path)
             with cls._lock: # if it doesn't exist, acquire lock to create it
                 if cls._instance is None: # double-check if instance was created while waiting for lock
-                    instance = super().__new__(cls) # create actually the instance
-                    instance._initialized = False # flag to prevent __init__ from running multiple times
-                    cls._instance = instance # assign the created instance to the CLASS variable
+                    cls._instance = cls()
         return cls._instance
 
     def __init__(self) -> None:
-        if self._initialized: # if instance is already initialized, skip re-initialization
-            return
-        # else initialize the instance
         # Dictionary to hold the configuration data (IR)
-        self._config: Dict[str, Any] = {} 
+        self._config: Dict[str, Any] = {}
         # List to track loaded files (for debugging/auditing)
         self._loaded_files: List[str] = []
         # Registry mapping file extensions to FormatCreators
         self._creators: Dict[str, FormatCreator] = {}
         self._register_default_creators() # Register built-in creators for JSON, YAML, and ENV
-
-        # Set the flag to indicate that initialization is complete
-        # This prevents __init__ from running again if __new__ returns the same instance.
-        self._initialized = True
 
     # ------------------------------------------------------------------ #
     # Creator registry                                                    #

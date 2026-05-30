@@ -1,8 +1,8 @@
 """
-Tests for ConfigurationManager — Singleton + Facade.
+Tests for ConfigurationManager — optional Singleton + Facade.
 
 Covers:
-    - Singleton behaviour (identity, thread safety)
+    - Optional singleton behaviour via instance() (identity, thread safety)
     - load() / merge() / get() / get_all()
     - Dot-notation access with defaults
     - Deep-merge semantics
@@ -47,20 +47,26 @@ def fresh_manager():
 # ================================================================== #
 
 class TestSingleton:
-    """Verify Singleton guarantees."""
+    """Verify optional singleton guarantees."""
 
-    def test_same_instance(self):
-        """Two calls to the constructor return the same object."""
+    def test_constructor_returns_independent_instances(self):
+        """Direct construction returns independent objects."""
         a = ConfigurationManager()
         b = ConfigurationManager()
+        assert a is not b
+
+    def test_instance_returns_singleton(self):
+        """instance() returns the shared singleton object."""
+        a = ConfigurationManager.instance()
+        b = ConfigurationManager.instance()
         assert a is b
 
     def test_thread_safety(self):
-        """Instances created from multiple threads are identical."""
+        """Singleton instances created from multiple threads are identical."""
         instances = []
 
         def create():
-            instances.append(ConfigurationManager())
+            instances.append(ConfigurationManager.instance())
 
         threads = [threading.Thread(target=create) for _ in range(20)]
         for t in threads:
@@ -71,17 +77,17 @@ class TestSingleton:
         assert all(inst is instances[0] for inst in instances)
 
     def test_destroy_allows_new_instance(self):
-        """_destroy() resets the singleton so a new instance can be created."""
-        first = ConfigurationManager()
+        """_destroy() resets the singleton so a new singleton can be created."""
+        first = ConfigurationManager.instance()
         ConfigurationManager._destroy()
-        second = ConfigurationManager()
+        second = ConfigurationManager.instance()
         assert first is not second
 
-    def test_reset_keeps_same_instance(self):
+    def test_reset_keeps_same_singleton_instance(self):
         """reset() clears state but does not destroy the singleton."""
-        mgr = ConfigurationManager()
+        mgr = ConfigurationManager.instance()
         mgr.reset()
-        assert ConfigurationManager() is mgr
+        assert ConfigurationManager.instance() is mgr
 
 
 # ================================================================== #

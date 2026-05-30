@@ -6,11 +6,11 @@
 
 ```
 ┌─────────────────────────────────────────────┐
-│  Singleton + Facade  (ConfigurationManager) │  ← single entry point
+│  Optional Singleton + Facade (ConfigurationManager) │  ← single entry point
 ├─────────────────────────────────────────────┤
 │  Factory Method      (FormatCreator)        │  ← selects reader/writer
 ├─────────────────────────────────────────────┤
-│  Template Method     (BaseReader/BaseWriter) │  ← defines the algorithm
+│  Template Method     (BaseReader/BaseWriter)│  ← defines the algorithm
 ├─────────────────────────────────────────────┤
 │  Adapter             (BaseAdapter)          │  ← wraps third-party libs
 └─────────────────────────────────────────────┘
@@ -18,7 +18,7 @@
 
 | Pattern | Class | Responsibility |
 |---|---|---|
-| **Singleton** | `ConfigurationManager` | One global instance, thread-safe |
+| **Singleton** | `ConfigurationManager.instance()` | One global instance, thread-safe |
 | **Facade** | `ConfigurationManager` | Simple API over the full pattern stack |
 | **Factory Method** | `FormatCreator` and subclasses | Create the right Reader/Writer pair |
 | **Template Method** | `BaseReader`, `BaseWriter` | Fixed algorithm, format-specific steps |
@@ -30,9 +30,11 @@
 
 ```mermaid
 flowchart TD
-    Client --> CM[ConfigurationManager Singleton + Facade]
+    Client --> CM[ConfigurationManager Facade]
+    Client --> S[ConfigurationManager.instance() Optional Singleton]
 
     CM --> FC{FormatCreator Factory Method}
+    S --> FC
 
     FC --> JC[JSONFormatCreator]
     FC --> YC[YAMLFormatCreator]
@@ -331,6 +333,45 @@ sequenceDiagram
 
     CM->>CM: _deep_merge(_config, new_config)
     CM-->>-Client: void
+```
+
+---
+
+## Data Flow: `get()`
+
+`get(key, default)` retrieves values from the internal configuration dictionary (IR). It supports dot-notation for navigating nested structures, handling missing keys safely by returning the provided default.
+
+```mermaid
+sequenceDiagram
+    actor Client
+    participant CM as ConfigurationManager<br/>(Singleton + Facade)
+    participant IR as _config<br/>(Dict)
+
+    Note over Client,IR: Scenario 1: Deep Nested Lookup (JSON/YAML)
+    Client->>+CM: get("app.server.port", 8080)
+    Note over CM: Split by ".": ["app", "server", "port"]
+    CM->>+IR: lookup "app"
+    IR-->>-CM: {"server": {"port": 3000}}
+    CM->>+IR: lookup "server"
+    IR-->>-CM: {"port": 3000}
+    CM->>+IR: lookup "port"
+    IR-->>-CM: 3000
+    CM-->>-Client: 3000
+
+    Note over Client,IR: Scenario 2: Flat Lookup (ENV)
+    Client->>+CM: get("APP__SERVER__PORT", 8080)
+    Note over CM: Split by ".": ["APP__SERVER__PORT"]<br/>(No dots to split)
+    CM->>+IR: lookup "APP__SERVER__PORT"
+    IR-->>-CM: "3000"
+    CM-->>-Client: "3000"
+
+    Note over Client,IR: Scenario 3: Missing Key with Default
+    Client->>+CM: get("database.password", "N/A")
+    Note over CM: Split by ".": ["database", "password"]
+    CM->>+IR: lookup "database"
+    IR-->>-CM: KeyError
+    Note over CM: Traversal stops, catches error
+    CM-->>-Client: "N/A" (Default returned)
 ```
 
 ---

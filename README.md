@@ -14,7 +14,7 @@ Proteus is a Python library that provides a clean, pattern-based approach to man
 - **Multi-format Support**: Load configurations from JSON and YAML files seamlessly
 - **Unified Interface**: Access all settings through a single, consistent API with dot-notation
 - **Smart Merging**: Combine multiple configuration files with intelligent deep-merge
-- **Thread-Safe**: Singleton pattern ensures safe concurrent access
+- **Thread-Safe**: Optional singleton access via `ConfigurationManager.instance()`
 - **Easily Extensible**: Add support for new formats (TOML, XML, etc.) with minimal code
 - **Zero External Dependencies**: Only requires `pyyaml` for YAML support
 
@@ -44,8 +44,8 @@ To do...
 
 Proteus is built on a foundation of proven design patterns from the Gang of Four catalog:
 
-### **Singleton Pattern**
-`ConfigurationManager` ensures a single, global point of access to configuration throughout your application, preventing inconsistencies.
+### **Optional Singleton Pattern**
+`ConfigurationManager.instance()` provides a single, global point of access to configuration when you want shared state, while direct construction still gives isolated instances.
 
 ### **Facade Pattern**
 Simple methods like `load()` and `get()` hide the complexity of parser creation, file validation, and data normalization.

@@ -1,6 +1,6 @@
 # ConfigurationManager
 
-> **GoF Patterns: Singleton + Facade** — Single global instance that hides the entire pattern stack behind a simple API.
+> **GoF Patterns: Optional Singleton + Facade** — Direct construction gives independent instances, while `instance()` exposes a shared thread-safe singleton when needed.
 
 ## Overview
 
@@ -13,15 +13,20 @@ Defined in `src/proteus/core.py`.
 
 ## Singleton Behavior
 
-`__new__` uses double-check locking with `threading.Lock` to guarantee a
-unique instance even under concurrent access.
+`instance()` uses double-check locking with `threading.Lock` to guarantee a
+unique shared instance even under concurrent access. Direct construction
+via `ConfigurationManager()` still returns a regular independent object.
 
 ```python
 from proteus import ConfigurationManager
 
 a = ConfigurationManager()
 b = ConfigurationManager()
-assert a is b  # always the same instance
+assert a is not b  # direct construction is independent
+
+singleton_a = ConfigurationManager.instance()
+singleton_b = ConfigurationManager.instance()
+assert singleton_a is singleton_b  # shared singleton
 ```
 
 ```mermaid
@@ -34,32 +39,24 @@ sequenceDiagram
     C->>CM: ConfigurationManager()
 
     rect rgb(8, 28, 45)
-    Note over CM,I: __new__ — Creation
-    CM->>CM: Check _instance == None
-    opt First check passes
-        CM->>L: acquire()
-        CM->>CM: Re-check _instance == None
-        opt Second check passes
-            CM->>I: super().__new__(cls)
-            CM->>CM: cls._instance = instance
-            CM->>I: _initialized = False
+        Note over CM, I: instance() — Creation
+        CM->>CM: Check _instance == None
+        opt First check passes
+            CM->>L: acquire()
+            CM->>CM: Re-check _instance == None
+            opt Second check passes
+                CM->>CM: cls._instance = cls()
+            end
+            CM->>L: release()
         end
-        L-->>CM: release()
     end
     CM-->>C: return _instance
-    end
 
     rect rgb(16, 56, 16)
-    Note over C,I: __init__ — Initialization
-    C->>I: __init__()
-    I->>I: Check _initialized
-    alt False — first time
+        Note over C, I: __init__ — Initialization
+        C->>I: __init__()
         I->>I: _config = {}
         I->>I: register default creators
-        I->>I: _initialized = True
-    else True — skip
-        I-->>C: return
-    end
     end
 ```
 
@@ -106,7 +103,7 @@ patterns collaborate:
 2. **Factory Method** — selects the correct creators by extension.
 3. **Template Method** — `reader.parse()` / `writer.write()`.
 4. **Adapter** — `load()` / `dump()` inside readers/writers.
-5. **Singleton** — the client calls this on the unique instance.
+5. **Optional Singleton** — the client can call this on `ConfigurationManager.instance()` if a shared manager is desired.
 
 
 ### `register_creator(creator: FormatCreator) → None`
