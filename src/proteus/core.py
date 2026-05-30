@@ -89,6 +89,20 @@ class ConfigurationManager:
         self._creators: Dict[str, FormatCreator] = {}
         self._register_default_creators() # Register built-in creators for JSON, YAML, and ENV
 
+    def __enter__(self) -> "ConfigurationManager":
+        """Enter a context manager scope and return this manager."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
+        """Reset transient state when leaving a context manager scope."""
+        self.reset()
+        return False
+
+    @classmethod
+    def temporary(cls) -> "ConfigurationManager":
+        """Create a fresh manager intended for use inside a `with` block."""
+        return cls()
+
     # ------------------------------------------------------------------ #
     # Creator registry                                                    #
     # ------------------------------------------------------------------ #

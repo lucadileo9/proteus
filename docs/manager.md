@@ -116,6 +116,20 @@ See [formats.md](formats.md#adding-a-new-format).
 Clear internal state (config data + loaded-file list). Does **not**
 destroy the singleton instance.
 
+### `temporary() → ConfigurationManager`
+
+Create a fresh manager intended for use inside a `with` block.
+
+```python
+from proteus import ConfigurationManager
+
+with ConfigurationManager.temporary() as config:
+    config.load("app.yaml")
+    print(config.get("database.host"))
+```
+
+When the context exits, the manager resets its internal state.
+
 ### `loaded_files() → List[str]`
 
 Returns a copy of the list of loaded file paths (resolved to absolute).

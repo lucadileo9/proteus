@@ -283,6 +283,23 @@ class TestTranslate:
 
 
 # ================================================================== #
+# Context manager                                                     #
+# ================================================================== #
+
+class TestContextManager:
+    """Verify the manager can be used as a context manager."""
+
+    def test_temporary_context_resets_state(self, json_file):
+        with ConfigurationManager.temporary() as mgr:
+            mgr.load(json_file)
+            assert mgr.get("database.host") == "localhost"
+            assert mgr.loaded_files()
+
+        assert mgr.get_all() == {}
+        assert mgr.loaded_files() == []
+
+
+# ================================================================== #
 # Unsupported format                                                  #
 # ================================================================== #
 
