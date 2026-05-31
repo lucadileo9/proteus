@@ -2,7 +2,9 @@
 
 **Unified Configuration Management Library for Python**
 
-
+[![CI](https://github.com/lucadileo9/proteus/actions/workflows/ci.yml/badge.svg)](https://github.com/lucadileo9/proteus/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/lucadileo9/proteus/branch/main/graph/badge.svg)](https://codecov.io/gh/lucadileo9/proteus)
+![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)
 
 Proteus is a Python library that provides a clean, pattern-based approach to managing application configurations. It allows you to load settings from multiple formats (JSON, YAML, ENV) and access them through a unified interface, regardless of the source format.
 
@@ -14,10 +16,11 @@ Proteus is a Python library that provides a clean, pattern-based approach to man
 - **Multi-format Support**: Load configurations from JSON and YAML files seamlessly
 - **Unified Interface**: Access all settings through a single, consistent API with dot-notation
 - **Smart Merging**: Combine multiple configuration files with intelligent deep-merge
+- **Translation Engine**: Convert configuration files between formats (e.g., YAML to JSON) programmatically
 - **Thread-Safe**: Optional singleton access via `ConfigurationManager.instance()`
 - **Context Manager**: Use `with ConfigurationManager.temporary()` for isolated workspaces
 - **Easily Extensible**: Add support for new formats (TOML, XML, etc.) with minimal code
-- **Zero External Dependencies**: Only requires `pyyaml` for YAML support
+- **Zero Heavy Dependencies**: Only requires `pyyaml` for YAML support and `python-dotenv` for ENV
 
 ---
 
@@ -71,7 +74,7 @@ Proteus is built on a foundation of proven design patterns from the Gang of Four
 `ConfigurationManager.temporary()` creates a short-lived manager for `with` blocks, automatically resetting state when the block ends.
 
 ### **Facade Pattern**
-Simple methods like `load()`, `get()`, `translate()`, and `translate_and_load()` hide the complexity of reader creation, file validation, and data normalization.
+Simple methods like `load()`, `get()`, `merge()`, `translate()`, and `translate_and_load()` hide the complexity of reader creation, file validation, and data normalization.
 
 ### **Factory Method Pattern**
 `FormatCreator` automatically selects and instantiates the appropriate reader/writer pair based on file extension, making format detection transparent.
@@ -80,7 +83,7 @@ Simple methods like `load()`, `get()`, `translate()`, and `translate_and_load()`
 `BaseReader` and `BaseWriter` define fixed algorithms (validate → read → parse and validate → serialize → write) while allowing subclasses to customize only the format-specific steps.
 
 ### **Adapter Pattern**
-Each adapter converts a specific format into a unified internal representation, so the manager works with consistent data structures.
+Each adapter converts a specific format into a unified internal representation (IR), so the manager works with consistent data structures.
 
 For detailed architecture documentation and diagrams, see:
 - [docs/architecture.md](docs/architecture.md) - Comprehensive architecture explanation
@@ -110,32 +113,26 @@ proteus/
 └── docs/                 # Documentation
 ```
 
-### Requirements
+### Toolchain
 
-- **Python**: 3.8 or higher
-- **Runtime Dependencies**: `pyyaml>=6.0`
-- **Development** (optional): `pytest`, `black`, `ruff`, `mypy`
+- **Linting & Formatting**: [Ruff](https://github.com/astral-sh/ruff) (ultra-fast all-in-one linter/formatter)
+- **Type Checking**: [Mypy](http://mypy-lang.org/)
+- **Testing**: [Pytest](https://pytest.org/) with [Pytest-Cov](https://github.com/pytest-dev/pytest-cov)
+- **Security**: [Bandit](https://github.com/PyCQA/bandit)
+- **Automation**: [Tox](https://tox.wiki/) (multi-version testing) and [Make](https://www.gnu.org/software/make/)
 
-### Practical Examples
+### Makefile Commands (Cross-platform)
 
-```python
-from pathlib import Path
-from proteus import ConfigurationManager
-
-config = ConfigurationManager.temporary()
-config.load(Path("config_examples/app.yaml"))
-config.translate_and_load(Path("config_examples/app.yaml"), Path("config_examples/output/app.json"))
-print(config.get("database.host"))
-```
-
-```python
-from proteus import ConfigurationManager
-
-with ConfigurationManager.temporary() as config:
-	config.load("config_examples/app.yaml")
-	print(config.get("server.port"))
-```
-
+| Command | Description |
+|---------|-------------|
+| `make install-dev` | Install all development dependencies and pre-commit hooks |
+| `make test` | Run the test suite and generate coverage report |
+| `make lint` | Run Ruff to check for code style and logical errors |
+| `make format` | Automatically format code and fix linting issues |
+| `make typecheck` | Run Mypy to verify static type hints |
+| `make tox` | Run tests against all supported Python versions |
+| `make all` | Run format, lint, typecheck, and tests in sequence |
+| `make build` | Prepare the package for distribution (wheel/sdist) |
 
 ---
 
@@ -170,13 +167,6 @@ Contributions are welcome! Whether you're fixing bugs, adding features, or impro
 6. Push to the branch (`git push origin feature/amazing-feature`)
 7. Open a Pull Request
 
-### Development Guidelines
-
-- Follow PEP 8 style guide
-- Add docstrings to public APIs
-- Update documentation for new features
-- Ensure backward compatibility
-
 ---
 
 ## 📄 License
@@ -198,9 +188,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Luca Di Leo**
 - GitHub: [@lucadileo9](https://github.com/lucadileo9)
 - Repository: [proteus](https://github.com/lucadileo9/proteus)
-
----
-
 
 ---
 
