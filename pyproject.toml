@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
-    {name = "Luca Di Leo", email = "luca.dileo@example.com"}
+    {name = "Luca Di Leo", email = "lucadileo70@gmail.com"}
 ]
 keywords = ["configuration", "config", "settings", "yaml", "json", "design-patterns"]
 classifiers = [
