@@ -23,14 +23,17 @@ from proteus.adapters.yaml_adapter import YAMLAdapter
 from proteus.formats.base_format import FormatCreator
 from proteus.formats.env_format import EnvFormatCreator
 from proteus.formats.json_format import JSONFormatCreator
+from proteus.formats.toml_format import TOMLFormatCreator
 from proteus.formats.yaml_format import YAMLFormatCreator
 from proteus.readers.base import BaseReader
 from proteus.readers.env_reader import EnvReader
 from proteus.readers.json_reader import JSONReader
+from proteus.readers.toml_reader import TOMLReader
 from proteus.readers.yaml_reader import YAMLReader
 from proteus.writers.base import BaseWriter
 from proteus.writers.env_writer import EnvWriter
 from proteus.writers.json_writer import JSONWriter
+from proteus.writers.toml_writer import TOMLWriter
 from proteus.writers.yaml_writer import YAMLWriter
 
 # ================================================================== #
@@ -243,6 +246,52 @@ class TestYAMLFormatCreator:
 
 
 # ================================================================== #
+# TOMLFormatCreator                                                   #
+# ================================================================== #
+
+
+class TestTOMLFormatCreator:
+    """Tests for the TOML concrete creator."""
+
+    def setup_method(self):
+        self.creator = TOMLFormatCreator()
+
+    # -- Factory Method contracts ----------------------------------- #
+
+    def test_create_reader_returns_toml_reader(self):
+        """create_reader() returns a TOMLReader instance."""
+        reader = self.creator.create_reader()
+        assert isinstance(reader, TOMLReader)
+
+    def test_create_writer_returns_toml_writer(self):
+        """create_writer() returns a TOMLWriter instance."""
+        writer = self.creator.create_writer()
+        assert isinstance(writer, TOMLWriter)
+
+    def test_reader_has_toml_adapter(self):
+        """The created reader uses a TOMLAdapter internally."""
+        from proteus.adapters.toml_adapter import TOMLAdapter
+
+        reader = self.creator.create_reader()
+        assert isinstance(reader._adapter, TOMLAdapter)
+
+    def test_get_extensions(self):
+        """get_extensions() returns ['.toml']."""
+        assert self.creator.get_extensions() == [".toml"]
+
+    # -- Integration ------------------------------------------------ #
+
+    def test_round_trip(self, tmp_path):
+        """Data survives write → read round-trip through factory pair."""
+        path = tmp_path / "roundtrip.toml"
+        writer = self.creator.create_writer()
+        writer.write(SAMPLE_NESTED, str(path))
+
+        reader = self.creator.create_reader()
+        assert reader.parse(str(path)) == SAMPLE_NESTED
+
+
+# ================================================================== #
 # EnvFormatCreator                                                    #
 # ================================================================== #
 
@@ -397,6 +446,36 @@ class TestCrossFormatTranslation:
         assert "DATABASE__PORT=5432" in content
         assert "APP__NAME=Proteus" in content
 
+    def test_toml_to_json(self, tmp_path):
+        """Translate TOML → JSON through factory-created pairs."""
+        from sample_data import SAMPLE_TOML
+
+        toml_file = tmp_path / "config.toml"
+        toml_file.write_text(SAMPLE_TOML, encoding="utf-8")
+        json_output = tmp_path / "output.json"
+
+        reader = TOMLFormatCreator().create_reader()
+        writer = JSONFormatCreator().create_writer()
+
+        data = reader.parse(str(toml_file))
+        writer.write(data, str(json_output))
+
+        assert json.loads(json_output.read_text(encoding="utf-8")) == SAMPLE_NESTED
+
+    def test_json_to_toml(self, json_file, tmp_path):
+        """Translate JSON → TOML through factory-created pairs."""
+        toml_output = tmp_path / "output.toml"
+
+        reader = JSONFormatCreator().create_reader()
+        writer = TOMLFormatCreator().create_writer()
+
+        data = reader.parse(json_file)
+        writer.write(data, str(toml_output))
+
+        # Use TOML reader to verify
+        result = TOMLFormatCreator().create_reader().parse(str(toml_output))
+        assert result == SAMPLE_NESTED
+
 
 # ================================================================== #
 # Package-level imports                                               #
@@ -423,6 +502,12 @@ class TestFormatsPackageImports:
         from proteus.formats import YAMLFormatCreator
 
         assert YAMLFormatCreator is not None
+
+    def test_import_toml_format_creator(self):
+        """TOMLFormatCreator is importable from the formats package."""
+        from proteus.formats import TOMLFormatCreator
+
+        assert TOMLFormatCreator is not None
 
     def test_import_env_format_creator(self):
         """EnvFormatCreator is importable from the formats package."""

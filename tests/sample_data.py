@@ -96,3 +96,22 @@ APP_NAME=Proteus
 ENV_EMPTY_VALUE = "EMPTY_KEY=\n"
 
 ENV_EMPTY = ""
+
+
+# ------------------------------------------------------------------ #
+# TOML content                                                        #
+# ------------------------------------------------------------------ #
+
+SAMPLE_TOML = """[database]
+host = "localhost"
+port = 5432
+name = "proteus_db"
+
+[app]
+name = "Proteus"
+debug = true
+version = "1.0.0"
+"""
+
+INVALID_TOML = '[database\nhost = "localhost"'
+TOML_SCALAR_ROOT = '"just a string"'
