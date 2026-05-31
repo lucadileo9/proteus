@@ -37,6 +37,7 @@ from .exceptions import (
 from .formats.base_format import FormatCreator
 from .formats.env_format import EnvFormatCreator
 from .formats.json_format import JSONFormatCreator
+from .formats.toml_format import TOMLFormatCreator
 from .formats.yaml_format import YAMLFormatCreator
 
 
@@ -113,10 +114,11 @@ class ConfigurationManager:
     # ------------------------------------------------------------------ #
 
     def _register_default_creators(self) -> None:
-        """Register built-in FormatCreators for JSON, YAML, and ENV."""
+        """Register built-in FormatCreators for JSON, YAML, TOML, and ENV."""
         for creator in (
             JSONFormatCreator(),
             YAMLFormatCreator(),
+            TOMLFormatCreator(),
             EnvFormatCreator(),
         ):
             for ext in creator.get_extensions():
