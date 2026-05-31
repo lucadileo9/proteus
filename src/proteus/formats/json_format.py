@@ -8,9 +8,9 @@ Couples ``JSONReader`` and ``JSONWriter``, both backed by the same
 from typing import List
 
 from ..adapters.json_adapter import JSONAdapter
-from .base_format import FormatCreator
 from ..readers.json_reader import JSONReader
 from ..writers.json_writer import JSONWriter
+from .base_format import FormatCreator
 
 
 class JSONFormatCreator(FormatCreator):

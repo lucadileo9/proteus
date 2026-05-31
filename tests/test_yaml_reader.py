@@ -9,15 +9,15 @@ Covers:
 """
 
 import pytest
-from proteus.readers.yaml_reader import YAMLReader
 from sample_data import (
-    SAMPLE_NESTED,
-    SAMPLE_YAML,
     INVALID_YAML,
+    SAMPLE_NESTED,
     YAML_EMPTY,
     YAML_ONLY_COMMENTS,
     YAML_SCALAR_ROOT,
 )
+
+from proteus.readers.yaml_reader import YAMLReader
 
 
 class TestYAMLReaderParse:
@@ -138,5 +138,6 @@ class TestYAMLReaderStructure:
     def test_adapter_type(self):
         """The adapter is a YAMLAdapter instance."""
         from proteus.adapters.yaml_adapter import YAMLAdapter
+
         reader = YAMLReader()
         assert isinstance(reader._adapter, YAMLAdapter)

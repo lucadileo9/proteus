@@ -55,9 +55,7 @@ class BaseWriter(ABC):
     def _validate(self, data: Dict[str, Any], filepath: Union[str, Path]) -> None:
         """Step 1 — verify data type and that the parent directory exists."""
         if not isinstance(data, dict):
-            raise TypeError(
-                f"data must be a dict, got {type(data).__name__}"
-            )
+            raise TypeError(f"data must be a dict, got {type(data).__name__}")
         parent = Path(filepath).parent
         if not parent.exists():
             raise FileNotFoundError(f"Directory not found: {parent}")

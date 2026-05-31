@@ -44,8 +44,7 @@ class JSONAdapter(BaseAdapter):
 
         if not isinstance(result, dict):
             raise ValueError(
-                f"JSON document root must be an object, "
-                f"got: {type(result).__name__}"
+                f"JSON document root must be an object, got: {type(result).__name__}"
             )
         return result
 

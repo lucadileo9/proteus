@@ -5,23 +5,24 @@ Provides temporary directories used across reader and writer
 test modules.  Sample data constants live in ``sample_data.py``.
 """
 
+from pathlib import Path
+
 import pytest
-
-from sample_data import SAMPLE_JSON, SAMPLE_YAML, SAMPLE_ENV
-
+from sample_data import SAMPLE_ENV, SAMPLE_JSON, SAMPLE_YAML
 
 # ------------------------------------------------------------------ #
 # Fixtures                                                            #
 # ------------------------------------------------------------------ #
 
+
 @pytest.fixture
-def tmp_dir(tmp_path):
+def tmp_dir(tmp_path: Path) -> Path:
     """Provide a temporary directory (pytest built-in tmp_path)."""
     return tmp_path
 
 
 @pytest.fixture
-def json_file(tmp_path):
+def json_file(tmp_path: Path) -> str:
     """Write sample JSON to a temp file and return the path."""
     path = tmp_path / "config.json"
     path.write_text(SAMPLE_JSON, encoding="utf-8")
@@ -29,7 +30,7 @@ def json_file(tmp_path):
 
 
 @pytest.fixture
-def yaml_file(tmp_path):
+def yaml_file(tmp_path: Path) -> str:
     """Write sample YAML to a temp file and return the path."""
     path = tmp_path / "config.yaml"
     path.write_text(SAMPLE_YAML, encoding="utf-8")
@@ -37,7 +38,7 @@ def yaml_file(tmp_path):
 
 
 @pytest.fixture
-def env_file(tmp_path):
+def env_file(tmp_path: Path) -> str:
     """Write sample .env to a temp file and return the path."""
     path = tmp_path / ".env"
     path.write_text(SAMPLE_ENV, encoding="utf-8")
@@ -45,7 +46,7 @@ def env_file(tmp_path):
 
 
 @pytest.fixture
-def json_output(tmp_path):
+def json_output(tmp_path: Path) -> Path:
     """Return a Path for a JSON output file (not yet written).
 
     Returned as Path (not str) so tests can both pass it to write()
@@ -55,7 +56,7 @@ def json_output(tmp_path):
 
 
 @pytest.fixture
-def yaml_output(tmp_path):
+def yaml_output(tmp_path: Path) -> Path:
     """Return a Path for a YAML output file (not yet written).
 
     Returned as Path (not str) so tests can both pass it to write()
@@ -65,7 +66,7 @@ def yaml_output(tmp_path):
 
 
 @pytest.fixture
-def env_output(tmp_path):
+def env_output(tmp_path: Path) -> Path:
     """Return a Path for an ENV output file (not yet written).
 
     Returned as Path (not str) so tests can both pass it to write()

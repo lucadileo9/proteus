@@ -9,15 +9,15 @@ Covers:
 """
 
 import pytest
-from proteus.readers.env_reader import EnvReader
 from sample_data import (
-    SAMPLE_FLAT,
-    SAMPLE_ENV,
-    ENV_WITH_QUOTES,
-    ENV_WITH_COMMENTS,
-    ENV_EMPTY_VALUE,
     ENV_EMPTY,
+    ENV_EMPTY_VALUE,
+    ENV_WITH_COMMENTS,
+    ENV_WITH_QUOTES,
+    SAMPLE_FLAT,
 )
+
+from proteus.readers.env_reader import EnvReader
 
 
 class TestEnvReaderParse:
@@ -128,5 +128,6 @@ class TestEnvReaderStructure:
     def test_adapter_type(self):
         """The adapter is an EnvAdapter instance."""
         from proteus.adapters.env_adapter import EnvAdapter
+
         reader = EnvReader()
         assert isinstance(reader._adapter, EnvAdapter)

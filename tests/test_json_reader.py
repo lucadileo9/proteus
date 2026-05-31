@@ -9,8 +9,9 @@ Covers:
 """
 
 import pytest
+from sample_data import INVALID_JSON, JSON_ARRAY_ROOT, SAMPLE_NESTED
+
 from proteus.readers.json_reader import JSONReader
-from sample_data import SAMPLE_NESTED, SAMPLE_JSON, INVALID_JSON, JSON_ARRAY_ROOT
 
 
 class TestJSONReaderParse:
@@ -127,5 +128,6 @@ class TestJSONReaderStructure:
     def test_adapter_type(self):
         """The adapter is a JSONAdapter instance."""
         from proteus.adapters.json_adapter import JSONAdapter
+
         reader = JSONReader()
         assert isinstance(reader._adapter, JSONAdapter)

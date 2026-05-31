@@ -19,11 +19,15 @@ from proteus.writers.yaml_writer import YAMLWriter
 
 
 class RecordingAdapter(BaseAdapter):
-    def __init__(self, load_result: Optional[Dict[str, Any]] = None, dump_result: str = "") -> None:
+    def __init__(
+        self,
+        load_result: Optional[Dict[str, Any]] = None,
+        dump_result: str = "",
+    ) -> None:
         self.load_result = load_result or {"injected": True}
         self.dump_result = dump_result or "INJECTED=true\n"
-        self.last_raw = None
-        self.last_data = None
+        self.last_raw: Optional[str] = None
+        self.last_data: Optional[Dict[str, Any]] = None
 
     def load(self, raw: str) -> Dict[str, Any]:
         self.last_raw = raw

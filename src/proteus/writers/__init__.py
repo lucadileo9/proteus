@@ -7,9 +7,9 @@ delegating the actual serialization logic to their Adapter.
 """
 
 from .base import BaseWriter
+from .env_writer import EnvWriter
 from .json_writer import JSONWriter
 from .yaml_writer import YAMLWriter
-from .env_writer import EnvWriter
 
 __all__ = [
     "BaseWriter",

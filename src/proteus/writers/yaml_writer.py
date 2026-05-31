@@ -7,8 +7,8 @@ Delegates serialization to ``YAMLAdapter`` — contains no direct ``yaml`` usage
 from typing import Any, Dict, Optional
 
 from ..adapters.base import BaseAdapter
-from .base import BaseWriter
 from ..adapters.yaml_adapter import YAMLAdapter
+from .base import BaseWriter
 
 
 class YAMLWriter(BaseWriter):

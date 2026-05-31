@@ -7,7 +7,8 @@ Run from the project root:
 
 from proteus import ConfigurationManager
 
-def main():
+
+def main() -> None:
     config = ConfigurationManager()
 
     # Load a YAML configuration file

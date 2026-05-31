@@ -2,7 +2,8 @@
 Proteus — Unified configuration management and translation library.
 
 Design patterns implemented:
-    - **Optional Singleton**: ``ConfigurationManager.instance()`` (shared global instance when needed)
+    - **Optional Singleton**: ``ConfigurationManager.instance()``
+      (shared global instance when needed)
     - **Facade**:          ``ConfigurationManager`` (simplified public API)
     - **Factory Method**:  ``FormatCreator`` (reader/writer pair creation)
     - **Template Method**: ``BaseReader`` / ``BaseWriter`` (fixed algorithms)

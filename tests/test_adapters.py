@@ -9,32 +9,32 @@ Covers every concrete adapter (JSONAdapter, YAMLAdapter, EnvAdapter):
 """
 
 import json
+
 import pytest
 import yaml
-
-from proteus.adapters.base import BaseAdapter
-from proteus.adapters.json_adapter import JSONAdapter
-from proteus.adapters.yaml_adapter import YAMLAdapter
-from proteus.adapters.env_adapter import EnvAdapter
-
 from sample_data import (
-    SAMPLE_NESTED,
+    INVALID_JSON,
+    INVALID_YAML,
+    JSON_ARRAY_ROOT,
+    SAMPLE_ENV,
     SAMPLE_FLAT,
     SAMPLE_JSON,
+    SAMPLE_NESTED,
     SAMPLE_YAML,
-    SAMPLE_ENV,
-    INVALID_JSON,
-    JSON_ARRAY_ROOT,
-    INVALID_YAML,
     YAML_EMPTY,
     YAML_ONLY_COMMENTS,
     YAML_SCALAR_ROOT,
 )
 
+from proteus.adapters.base import BaseAdapter
+from proteus.adapters.env_adapter import EnvAdapter
+from proteus.adapters.json_adapter import JSONAdapter
+from proteus.adapters.yaml_adapter import YAMLAdapter
 
 # ================================================================== #
 # BaseAdapter — abstract target                                       #
 # ================================================================== #
+
 
 class TestBaseAdapterAbstract:
     """Verify that BaseAdapter cannot be instantiated directly."""
@@ -52,6 +52,7 @@ class TestBaseAdapterAbstract:
 
     def test_subclass_missing_method(self):
         """A subclass that only implements load() is still abstract."""
+
         class Incomplete(BaseAdapter):
             def load(self, raw):
                 return {}
@@ -63,6 +64,7 @@ class TestBaseAdapterAbstract:
 # ================================================================== #
 # JSONAdapter                                                         #
 # ================================================================== #
+
 
 class TestJSONAdapterLoad:
     """Tests for JSONAdapter.load()."""
@@ -157,6 +159,7 @@ class TestJSONAdapterDump:
 # YAMLAdapter                                                         #
 # ================================================================== #
 
+
 class TestYAMLAdapterLoad:
     """Tests for YAMLAdapter.load()."""
 
@@ -248,9 +251,7 @@ class TestYAMLAdapterDump:
         data = {"zebra": 1, "alpha": 2, "middle": 3}
         raw = self.adapter.dump(data)
         keys_in_output = [
-            line.split(":")[0]
-            for line in raw.strip().splitlines()
-            if ":" in line
+            line.split(":")[0] for line in raw.strip().splitlines() if ":" in line
         ]
         assert keys_in_output == ["zebra", "alpha", "middle"]
 
@@ -258,6 +259,7 @@ class TestYAMLAdapterDump:
 # ================================================================== #
 # EnvAdapter                                                          #
 # ================================================================== #
+
 
 class TestEnvAdapterLoad:
     """Tests for EnvAdapter.load()."""

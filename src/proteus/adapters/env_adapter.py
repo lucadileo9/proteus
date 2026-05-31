@@ -116,7 +116,6 @@ class EnvAdapter(BaseAdapter):
     def _needs_quoting(value: str) -> bool:
         """Return True if the value must be wrapped in double quotes."""
         # Quoting required for: empty string, spaces, =, #, $, newlines
-        return (
-            value == ""
-            or any(c in value for c in (" ", "\t", "=", "#", "$", "\n", "'", '"'))
+        return value == "" or any(
+            c in value for c in (" ", "\t", "=", "#", "$", "\n", "'", '"')
         )

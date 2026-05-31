@@ -51,8 +51,7 @@ class YAMLAdapter(BaseAdapter):
 
         if not isinstance(result, dict):
             raise ValueError(
-                f"YAML document root must be a mapping, "
-                f"got: {type(result).__name__}"
+                f"YAML document root must be a mapping, got: {type(result).__name__}"
             )
         return result
 

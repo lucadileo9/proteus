@@ -7,8 +7,8 @@ Delegates parsing to ``YAMLAdapter`` — contains no direct ``yaml`` usage.
 from typing import Any, Dict, Optional
 
 from ..adapters.base import BaseAdapter
-from .base import BaseReader
 from ..adapters.yaml_adapter import YAMLAdapter
+from .base import BaseReader
 
 
 class YAMLReader(BaseReader):

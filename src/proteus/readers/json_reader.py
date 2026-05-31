@@ -7,8 +7,8 @@ Delegates parsing to ``JSONAdapter`` — contains no direct ``json`` usage.
 from typing import Any, Dict, Optional
 
 from ..adapters.base import BaseAdapter
-from .base import BaseReader
 from ..adapters.json_adapter import JSONAdapter
+from .base import BaseReader
 
 
 class JSONReader(BaseReader):

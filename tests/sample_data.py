@@ -7,7 +7,6 @@ reader and writer test modules.
 
 from typing import Any, Dict
 
-
 # ------------------------------------------------------------------ #
 # Sample data                                                         #
 # ------------------------------------------------------------------ #
@@ -84,9 +83,9 @@ APP_NAME=Proteus
 DEBUG=true
 """
 
-ENV_WITH_QUOTES = '''GREETING="hello world"
+ENV_WITH_QUOTES = """GREETING="hello world"
 PATH_VAR='/usr/local/bin'
-'''
+"""
 
 ENV_WITH_COMMENTS = """# database settings
 DB_HOST=localhost

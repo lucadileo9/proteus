@@ -7,9 +7,9 @@ delegating the actual parsing logic to their Adapter.
 """
 
 from .base import BaseReader
+from .env_reader import EnvReader
 from .json_reader import JSONReader
 from .yaml_reader import YAMLReader
-from .env_reader import EnvReader
 
 __all__ = [
     "BaseReader",

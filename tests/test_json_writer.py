@@ -9,10 +9,12 @@ Covers:
 """
 
 import json
+
 import pytest
-from proteus.writers.json_writer import JSONWriter
-from proteus.readers.json_reader import JSONReader
 from sample_data import SAMPLE_NESTED
+
+from proteus.readers.json_reader import JSONReader
+from proteus.writers.json_writer import JSONWriter
 
 
 class TestJSONWriterWrite:
@@ -138,5 +140,6 @@ class TestJSONWriterStructure:
     def test_adapter_type(self):
         """The adapter is a JSONAdapter instance."""
         from proteus.adapters.json_adapter import JSONAdapter
+
         writer = JSONWriter()
         assert isinstance(writer._adapter, JSONAdapter)

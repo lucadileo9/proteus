@@ -7,8 +7,8 @@ Delegates serialization to ``JSONAdapter`` — contains no direct ``json`` usage
 from typing import Any, Dict, Optional
 
 from ..adapters.base import BaseAdapter
-from .base import BaseWriter
 from ..adapters.json_adapter import JSONAdapter
+from .base import BaseWriter
 
 
 class JSONWriter(BaseWriter):

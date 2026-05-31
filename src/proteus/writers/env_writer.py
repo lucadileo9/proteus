@@ -7,8 +7,8 @@ Delegates serialization to ``EnvAdapter`` — contains no direct ``dotenv`` usag
 from typing import Any, Dict, Optional
 
 from ..adapters.base import BaseAdapter
-from .base import BaseWriter
 from ..adapters.env_adapter import EnvAdapter
+from .base import BaseWriter
 
 
 class EnvWriter(BaseWriter):

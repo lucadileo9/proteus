@@ -10,9 +10,10 @@ Covers:
 """
 
 import pytest
-from proteus.writers.env_writer import EnvWriter
+from sample_data import SAMPLE_FLAT
+
 from proteus.readers.env_reader import EnvReader
-from sample_data import SAMPLE_FLAT, SAMPLE_NESTED
+from proteus.writers.env_writer import EnvWriter
 
 
 class TestEnvWriterWrite:
@@ -194,5 +195,6 @@ class TestEnvWriterStructure:
     def test_adapter_type(self):
         """The adapter is an EnvAdapter instance."""
         from proteus.adapters.env_adapter import EnvAdapter
+
         writer = EnvWriter()
         assert isinstance(writer._adapter, EnvAdapter)

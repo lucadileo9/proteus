@@ -8,9 +8,9 @@ Couples ``YAMLReader`` and ``YAMLWriter``, both backed by the same
 from typing import List
 
 from ..adapters.yaml_adapter import YAMLAdapter
-from .base_format import FormatCreator
 from ..readers.yaml_reader import YAMLReader
 from ..writers.yaml_writer import YAMLWriter
+from .base_format import FormatCreator
 
 
 class YAMLFormatCreator(FormatCreator):

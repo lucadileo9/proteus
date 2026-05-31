@@ -58,8 +58,10 @@ class ConfigurationManager:
     """
 
     # These are class-level attributes for the optional singleton access.
-    _instance: Optional["ConfigurationManager"] = None # this represents the single instance of the class, initially None
-    _lock: threading.Lock = threading.Lock() # lock to ensure thread-safe singleton creation
+    # this represents the single instance of the class, initially None
+    _instance: Optional["ConfigurationManager"] = None
+    # lock to ensure thread-safe singleton creation
+    _lock: threading.Lock = threading.Lock()
 
     # ------------------------------------------------------------------ #
     # Singleton                                                           #
@@ -76,9 +78,10 @@ class ConfigurationManager:
         Direct construction via ``ConfigurationManager()`` remains available
         for callers that want isolated instances.
         """
-        if cls._instance is None: # check if instance already exists (fast path)
-            with cls._lock: # if it doesn't exist, acquire lock to create it
-                if cls._instance is None: # double-check if instance was created while waiting for lock
+        if cls._instance is None:  # check if instance already exists (fast path)
+            with cls._lock:  # if it doesn't exist, acquire lock to create it
+                # double-check if instance was created while waiting for lock
+                if cls._instance is None:
                     cls._instance = cls()
         return cls._instance
 
@@ -89,16 +92,16 @@ class ConfigurationManager:
         self._loaded_files: List[str] = []
         # Registry mapping file extensions to FormatCreators
         self._creators: Dict[str, FormatCreator] = {}
-        self._register_default_creators() # Register built-in creators for JSON, YAML, and ENV
+        # Register built-in creators for JSON, YAML, and ENV
+        self._register_default_creators()
 
     def __enter__(self) -> "ConfigurationManager":
         """Enter a context manager scope and return this manager."""
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         """Reset transient state when leaving a context manager scope."""
         self.reset()
-        return False
 
     @classmethod
     def temporary(cls) -> "ConfigurationManager":
@@ -150,8 +153,7 @@ class ConfigurationManager:
         if creator is None:
             supported = ", ".join(sorted(self._creators.keys()))
             raise UnsupportedFormatError(
-                f"Format '{ext}' is not supported. "
-                f"Available: {supported}"
+                f"Format '{ext}' is not supported. Available: {supported}"
             )
         return creator
 
@@ -171,11 +173,16 @@ class ConfigurationManager:
             FileNotFoundError: File does not exist.
             ValueError: Content cannot be parsed.
         """
-        creator = self._get_creator(filepath) # select the appropriate FormatCreator based on the file extension
-        reader = creator.create_reader() # use the creator to create a Reader instance
-        new_config = reader.parse(filepath) # parse the file to get a new configuration dictionary
-        self._config = self._deep_merge(self._config, new_config) # deep-merge the new configuration into the existing one
-        self._loaded_files.append(str(Path(filepath).resolve())) # track the loaded file (store absolute path for clarity)
+        # select the appropriate FormatCreator based on the file extension
+        creator = self._get_creator(filepath)
+        # use the creator to create a Reader instance
+        reader = creator.create_reader()
+        # parse the file to get a new configuration dictionary
+        new_config = reader.parse(filepath)
+        # deep-merge the new configuration into the existing one
+        self._config = self._deep_merge(self._config, new_config)
+        # track the loaded file (store absolute path for clarity)
+        self._loaded_files.append(str(Path(filepath).resolve()))
 
     def merge(self, filepath: Union[str, Path]) -> None:
         """
@@ -220,7 +227,9 @@ class ConfigurationManager:
         """Return a deep copy of the entire IR."""
         return copy.deepcopy(self._config)
 
-    def translate(self, input_path: Union[str, Path], output_path: Union[str, Path]) -> None:
+    def translate(
+        self, input_path: Union[str, Path], output_path: Union[str, Path]
+    ) -> None:
         """
         Convert a configuration file from one format to another.
 
@@ -230,7 +239,8 @@ class ConfigurationManager:
         2. **Factory Method** — ``_get_creator()`` selects creators.
         3. **Template Method** — ``reader.parse()`` / ``writer.write()``.
         4. **Adapter** — ``load()`` / ``dump()`` inside readers/writers.
-        5. **Optional Singleton** — the client can call this on the shared manager if desired.
+        5. **Optional Singleton** — the client can call this on the shared manager
+           if desired.
 
         Args:
             input_path:  Path to the source file.
@@ -241,16 +251,24 @@ class ConfigurationManager:
             FileNotFoundError: Source file does not exist or dest dir missing.
             ValueError: Content cannot be parsed or serialized.
         """
-        in_creator = self._get_creator(input_path) # select the appropriate FormatCreator for the input file
-        out_creator = self._get_creator(output_path) # select the appropriate FormatCreator for the output file
+        # select the appropriate FormatCreator for the input file
+        in_creator = self._get_creator(input_path)
+        # select the appropriate FormatCreator for the output file
+        out_creator = self._get_creator(output_path)
 
-        reader = in_creator.create_reader() # create a Reader instance for the input format
-        writer = out_creator.create_writer() # create a Writer instance for the output format
+        # create a Reader instance for the input format
+        reader = in_creator.create_reader()
+        # create a Writer instance for the output format
+        writer = out_creator.create_writer()
 
-        data = reader.parse(input_path) # parse the input file to get the configuration data as a dictionary
-        writer.write(data, output_path) # write the configuration data to the output file in the new format
+        # parse the input file to get the configuration data as a dictionary
+        data = reader.parse(input_path)
+        # write the configuration data to the output file in the new format
+        writer.write(data, output_path)
 
-    def translate_and_load(self, input_path: Union[str, Path], output_path: Union[str, Path]) -> None:
+    def translate_and_load(
+        self, input_path: Union[str, Path], output_path: Union[str, Path]
+    ) -> None:
         """
         Translate a configuration file and then load the translated output.
 
@@ -266,7 +284,7 @@ class ConfigurationManager:
 
     def loaded_files(self) -> List[str]:
         """Return a COPY of the loaded-file list."""
-        return self._loaded_files.copy() # Use copy to prevent external mutation
+        return self._loaded_files.copy()  # Use copy to prevent external mutation
 
     def reset(self) -> None:
         """
@@ -303,19 +321,18 @@ class ConfigurationManager:
         Scalar values in *override* win.  Nested dicts are merged
         recursively — neither side is mutated.
         """
-        result = base.copy() # start with a shallow copy of the base
-        for key, value in override.items(): # iterate over the new dictionary
+        result = base.copy()  # start with a shallow copy of the base
+        for key, value in override.items():  # iterate over the new dictionary
             if (
-                key in result # if the key exists in the base
-                and isinstance(result[key], dict) # and the corresponding value in the base is a dict
-                and isinstance(value, dict) # and the value in the override is also a dict
+                key in result  # if the key exists in the base
+                and isinstance(result[key], dict)  # and base value is a dict
+                and isinstance(value, dict)  # and override value is a dict
             ):
                 # recursively merge the nested dictionaries
-                result[key] = cls._deep_merge(
-                    result[key], value
-                )
+                result[key] = cls._deep_merge(result[key], value)
             else:
-                # instead if the key doesn't exist in the base, or either value is not a dict, override it directly
+                # instead if the key doesn't exist in the base, or either
+                # value is not a dict, override it directly
                 result[key] = value
         return result
 

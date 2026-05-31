@@ -10,9 +10,10 @@ Covers:
 
 import pytest
 import yaml
-from proteus.writers.yaml_writer import YAMLWriter
-from proteus.readers.yaml_reader import YAMLReader
 from sample_data import SAMPLE_NESTED
+
+from proteus.readers.yaml_reader import YAMLReader
+from proteus.writers.yaml_writer import YAMLWriter
 
 
 class TestYAMLWriterWrite:
@@ -134,5 +135,6 @@ class TestYAMLWriterStructure:
     def test_adapter_type(self):
         """The adapter is a YAMLAdapter instance."""
         from proteus.adapters.yaml_adapter import YAMLAdapter
+
         writer = YAMLWriter()
         assert isinstance(writer._adapter, YAMLAdapter)

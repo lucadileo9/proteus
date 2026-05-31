@@ -7,8 +7,8 @@ Delegates parsing to ``EnvAdapter`` — contains no direct ``dotenv`` usage.
 from typing import Any, Dict, Optional
 
 from ..adapters.base import BaseAdapter
-from .base import BaseReader
 from ..adapters.env_adapter import EnvAdapter
+from .base import BaseReader
 
 
 class EnvReader(BaseReader):

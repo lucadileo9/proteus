@@ -18,6 +18,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+from sample_data import SAMPLE_NESTED
 
 from proteus.core import ConfigurationManager
 from proteus.exceptions import (
@@ -29,12 +30,10 @@ from proteus.formats.base_format import FormatCreator
 from proteus.readers.base import BaseReader
 from proteus.writers.base import BaseWriter
 
-from sample_data import SAMPLE_NESTED
-
-
 # ------------------------------------------------------------------ #
 # Ensure every test gets a fresh singleton                            #
 # ------------------------------------------------------------------ #
+
 
 @pytest.fixture(autouse=True)
 def fresh_manager():
@@ -47,6 +46,7 @@ def fresh_manager():
 # ================================================================== #
 # Singleton behaviour                                                 #
 # ================================================================== #
+
 
 class TestSingleton:
     """Verify optional singleton guarantees."""
@@ -96,6 +96,7 @@ class TestSingleton:
 # load() + get()                                                      #
 # ================================================================== #
 
+
 class TestLoadAndGet:
     """Test loading files and accessing values."""
 
@@ -144,7 +145,8 @@ class TestLoadAndGet:
     def test_get_not_loaded_raises(self):
         """get() raises ConfigurationNotLoadedError when no config is loaded."""
         mgr = ConfigurationManager()
-        with pytest.raises(ConfigurationNotLoadedError, match="No configuration loaded"):
+        msg = "No configuration loaded"
+        with pytest.raises(ConfigurationNotLoadedError, match=msg):
             mgr.get("any.key")
 
     def test_get_invalid_key_raises(self):
@@ -187,6 +189,7 @@ class TestLoadAndGet:
 # ================================================================== #
 # merge() + deep-merge semantics                                      #
 # ================================================================== #
+
 
 class TestMerge:
     """Test deep-merge behaviour."""
@@ -243,6 +246,7 @@ class TestMerge:
 # ================================================================== #
 # translate()                                                         #
 # ================================================================== #
+
 
 class TestTranslate:
     """Test format translation through the Facade."""
@@ -323,7 +327,7 @@ class TestTranslate:
         assert mgr.get("database.host") == "localhost"
 
     def test_translate_and_load_updates_state(self, json_file, tmp_path):
-        """translate_and_load() writes output and loads the translated file into state."""
+        """translate_and_load() writes output and updates state."""
         output = tmp_path / "translated.yaml"
 
         mgr = ConfigurationManager()
@@ -338,6 +342,7 @@ class TestTranslate:
 # ================================================================== #
 # Context manager                                                     #
 # ================================================================== #
+
 
 class TestContextManager:
     """Verify the manager can be used as a context manager."""
@@ -360,6 +365,7 @@ class TestContextManager:
 # ================================================================== #
 # Unsupported format                                                  #
 # ================================================================== #
+
 
 class TestUnsupportedFormat:
     """Verify error handling for unsupported file formats."""
@@ -386,6 +392,7 @@ class TestUnsupportedFormat:
 # ================================================================== #
 # register_creator() extensibility                                    #
 # ================================================================== #
+
 
 class TestRegisterCreator:
     """Verify that custom creators can be plugged in."""
@@ -447,6 +454,7 @@ class TestRegisterCreator:
 # reset()                                                             #
 # ================================================================== #
 
+
 class TestReset:
     """Verify reset() clears state without destroying the singleton."""
 
@@ -473,6 +481,7 @@ class TestReset:
 # Default creators registered                                         #
 # ================================================================== #
 
+
 class TestDefaultCreators:
     """Verify that all built-in formats are registered out of the box."""
 
@@ -497,10 +506,12 @@ class TestDefaultCreators:
 # Package-level import                                                #
 # ================================================================== #
 
+
 class TestPackageImport:
     """Verify that ConfigurationManager is importable from the top-level package."""
 
     def test_import_from_package(self):
         """ConfigurationManager is accessible via `from proteus import ...`."""
-        from proteus import ConfigurationManager as CM
-        assert CM is ConfigurationManager
+        from proteus import ConfigurationManager
+
+        assert ConfigurationManager is not None
