@@ -1,0 +1,76 @@
+name: Feature Request
+description: Suggest a new functionality
+title: "[FEATURE] "
+labels: ["enhancement"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion! Describe the feature you'd like to see.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to Solve
+      description: What problem would this feature solve?
+      placeholder: "I'm always frustrated when..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How would you like it to work?
+      placeholder: "I would like to be able to..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered alternative solutions?
+      placeholder: "An alternative could be..."
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Usage Examples
+      description: Show how you would use this feature.
+      render: python
+      placeholder: |
+        # Example
+        from proteus import ConfigurationManager
+        config = ConfigurationManager()
+        config.new_feature()
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this to you?
+      options:
+        - "Nice to have"
+        - "Important"
+        - "Critical"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I am available to work on this feature
+        - label: I can help with documentation
+        - label: I can help with testing
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Other useful information.
+      placeholder: "Links, references, mockups..."
