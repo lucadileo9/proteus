@@ -43,7 +43,7 @@ pip install -e .
 from proteus import ConfigurationManager
 
 config = ConfigurationManager()
-config.load("config_examples/app.yaml")
+config.load("examples/configs/app.yaml")
 
 print(config.get("app_name"))
 print(config.get("database.host"))
@@ -59,6 +59,8 @@ localhost
 ```
 
 For a shared application-wide instance, use `ConfigurationManager.instance()`.
+
+For detailed and comprehensive examples covering all formats (JSON, YAML, TOML, ENV), see the [examples/](examples/) directory.
 
 
 ---
@@ -108,8 +110,7 @@ proteus/
 │   ├── formats/           # Creator classes for readers/writers
 │   ├── readers/           # Template Method readers
 │   └── writers/           # Template Method writers
-├── examples/             # Usage examples
-├── config_examples/      # Sample configuration files
+├── examples/             # Usage examples and configs
 └── docs/                 # Documentation
 ```
 
