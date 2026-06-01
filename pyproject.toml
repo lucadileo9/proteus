@@ -3,12 +3,12 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "proteus"
+name = "proteus-config"
 version = "0.1.0"
 description = "Unified configuration management library for Python"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {text = "MIT"}
+license = {file = "LICENSE"}
 authors = [
     {name = "Luca Di Leo", email = "lucadileo70@gmail.com"}
 ]
@@ -50,12 +50,13 @@ Documentation = "https://github.com/lucadileo9/proteus#readme"
 Repository = "https://github.com/lucadileo9/proteus"
 Issues = "https://github.com/lucadileo9/proteus/issues"
 
-[tool.hatchling.build.targets.wheel]
+[tool.hatch.build.targets.wheel]
 packages = ["src/proteus"]
 
-[tool.hatchling.build.targets.sdist]
+[tool.hatch.build.targets.sdist]
 include = [
-    "src/proteus/py.typed",
+    "src/proteus",
+    "LICENSE",
 ]
 
 [tool.coverage.run]
