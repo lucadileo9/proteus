@@ -30,6 +30,7 @@ Defined in `src/proteus/readers/base.py`.
 |-------|--------|-------------|
 | `JSONReader` | `readers/json_reader.py` | `JSONAdapter` |
 | `YAMLReader` | `readers/yaml_reader.py` | `YAMLAdapter` |
+| `TOMLReader` | `readers/toml_reader.py` | `TOMLAdapter` |
 | `EnvReader`  | `readers/env_reader.py`  | `EnvAdapter`  |
 
 Each concrete reader:

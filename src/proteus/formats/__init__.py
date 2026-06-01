@@ -10,11 +10,13 @@ readers or writers (Dependency Inversion Principle).
 from .base_format import FormatCreator
 from .env_format import EnvFormatCreator
 from .json_format import JSONFormatCreator
+from .toml_format import TOMLFormatCreator
 from .yaml_format import YAMLFormatCreator
 
 __all__ = [
     "FormatCreator",
     "JSONFormatCreator",
     "YAMLFormatCreator",
+    "TOMLFormatCreator",
     "EnvFormatCreator",
 ]

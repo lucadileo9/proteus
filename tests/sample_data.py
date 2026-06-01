@@ -5,13 +5,12 @@ Provides constant dictionaries and strings used across
 reader and writer test modules.
 """
 
-from typing import Any, Dict
 
 # ------------------------------------------------------------------ #
 # Sample data                                                         #
 # ------------------------------------------------------------------ #
 
-SAMPLE_NESTED: Dict[str, Any] = {
+SAMPLE_NESTED = {
     "database": {
         "host": "localhost",
         "port": 5432,
@@ -24,7 +23,7 @@ SAMPLE_NESTED: Dict[str, Any] = {
     },
 }
 
-SAMPLE_FLAT: Dict[str, str] = {
+SAMPLE_FLAT = {
     "DB_HOST": "localhost",
     "DB_PORT": "5432",
     "APP_NAME": "Proteus",
@@ -96,3 +95,22 @@ APP_NAME=Proteus
 ENV_EMPTY_VALUE = "EMPTY_KEY=\n"
 
 ENV_EMPTY = ""
+
+
+# ------------------------------------------------------------------ #
+# TOML content                                                        #
+# ------------------------------------------------------------------ #
+
+SAMPLE_TOML = """[database]
+host = "localhost"
+port = 5432
+name = "proteus_db"
+
+[app]
+name = "Proteus"
+debug = true
+version = "1.0.0"
+"""
+
+INVALID_TOML = '[database\nhost = "localhost"'
+TOML_SCALAR_ROOT = '"just a string"'

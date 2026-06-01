@@ -25,6 +25,7 @@ Defined in `src/proteus/formats/base_format.py`.
 |---------|-----------|--------|--------|
 | `JSONFormatCreator` | `.json` | `JSONReader` | `JSONWriter` |
 | `YAMLFormatCreator` | `.yaml`, `.yml` | `YAMLReader` | `YAMLWriter` |
+| `TOMLFormatCreator` | `.toml` | `TOMLReader` | `TOMLWriter` |
 | `EnvFormatCreator`  | `.env` | `EnvReader` | `EnvWriter` |
 
 ## How `translate()` Uses Two Creators

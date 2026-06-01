@@ -1,0 +1,57 @@
+name: Documentation
+description: Improve or suggest documentation
+title: "[DOCS] "
+labels: ["documentation"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us improve the documentation!
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Documentation Type
+      options:
+        - "README"
+        - "API Reference"
+        - "Tutorial/Guide"
+        - "Code Comments"
+        - "Examples"
+        - "Contributing Guide"
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue
+    attributes:
+      label: Current Issue
+      description: What is missing or unclear?
+      placeholder: "The documentation doesn't explain..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: improvement
+    attributes:
+      label: Suggested Improvement
+      description: How would you improve the documentation?
+      placeholder: "I suggest adding..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: Location
+      description: Where is the documentation to be improved?
+      placeholder: "README.md, line 42 / docs/api.md"
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I can write this documentation

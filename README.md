@@ -6,14 +6,14 @@
 [![codecov](https://codecov.io/gh/lucadileo9/proteus/branch/main/graph/badge.svg)](https://codecov.io/gh/lucadileo9/proteus)
 ![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)
 
-Proteus is a Python library that provides a clean, pattern-based approach to managing application configurations. It allows you to load settings from multiple formats (JSON, YAML, ENV) and access them through a unified interface, regardless of the source format.
+Proteus is a Python library that provides a clean, pattern-based approach to managing application configurations. It allows you to load settings from multiple formats (JSON, YAML, TOML, ENV) and access them through a unified interface, regardless of the source format.
 
 
 ---
 
 ## ✨ Features
 
-- **Multi-format Support**: Load configurations from JSON and YAML files seamlessly
+- **Multi-format Support**: Load configurations from JSON, YAML, and TOML files seamlessly
 - **Unified Interface**: Access all settings through a single, consistent API with dot-notation
 - **Smart Merging**: Combine multiple configuration files with intelligent deep-merge
 - **Translation Engine**: Convert configuration files between formats (e.g., YAML to JSON) programmatically
@@ -43,7 +43,7 @@ pip install -e .
 from proteus import ConfigurationManager
 
 config = ConfigurationManager()
-config.load("config_examples/app.yaml")
+config.load("examples/configs/app.yaml")
 
 print(config.get("app_name"))
 print(config.get("database.host"))
@@ -59,6 +59,8 @@ localhost
 ```
 
 For a shared application-wide instance, use `ConfigurationManager.instance()`.
+
+For detailed and comprehensive examples covering all formats (JSON, YAML, TOML, ENV), see the [examples/](examples/) directory.
 
 
 ---
@@ -108,8 +110,7 @@ proteus/
 │   ├── formats/           # Creator classes for readers/writers
 │   ├── readers/           # Template Method readers
 │   └── writers/           # Template Method writers
-├── examples/             # Usage examples
-├── config_examples/      # Sample configuration files
+├── examples/             # Usage examples and configs
 └── docs/                 # Documentation
 ```
 

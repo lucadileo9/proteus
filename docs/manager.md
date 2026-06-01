@@ -27,6 +27,11 @@ assert a is not b  # direct construction is independent
 singleton_a = ConfigurationManager.instance()
 singleton_b = ConfigurationManager.instance()
 assert singleton_a is singleton_b  # shared singleton
+
+# _destroy() can be used to forcefully clear the singleton (mostly for tests)
+ConfigurationManager._destroy()
+singleton_c = ConfigurationManager.instance()
+assert singleton_a is not singleton_c
 ```
 
 ```mermaid

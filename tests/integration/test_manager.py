@@ -381,7 +381,7 @@ class TestUnsupportedFormat:
 
     def test_error_lists_available(self, tmp_path):
         """The UnsupportedFormatError message lists available formats."""
-        path = tmp_path / "cfg.toml"
+        path = tmp_path / "cfg.unsupported"
         path.write_text("", encoding="utf-8")
 
         mgr = ConfigurationManager()
