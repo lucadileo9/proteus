@@ -5,13 +5,12 @@ Provides constant dictionaries and strings used across
 reader and writer test modules.
 """
 
-from typing import Any, Dict
 
 # ------------------------------------------------------------------ #
 # Sample data                                                         #
 # ------------------------------------------------------------------ #
 
-SAMPLE_NESTED: Dict[str, Any] = {
+SAMPLE_NESTED = {
     "database": {
         "host": "localhost",
         "port": 5432,
@@ -24,7 +23,7 @@ SAMPLE_NESTED: Dict[str, Any] = {
     },
 }
 
-SAMPLE_FLAT: Dict[str, str] = {
+SAMPLE_FLAT = {
     "DB_HOST": "localhost",
     "DB_PORT": "5432",
     "APP_NAME": "Proteus",

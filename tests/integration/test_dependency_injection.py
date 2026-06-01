@@ -1,14 +1,3 @@
-"""
-Tests for optional adapter dependency injection in readers and writers.
-
-Covers:
-    - Readers can receive a custom adapter instance
-    - Writers can receive a custom adapter instance
-    - Default behavior still uses the built-in adapters when none is provided
-"""
-
-from typing import Any, Dict, Optional
-
 from proteus.adapters.base import BaseAdapter
 from proteus.readers.env_reader import EnvReader
 from proteus.readers.json_reader import JSONReader
@@ -19,21 +8,17 @@ from proteus.writers.yaml_writer import YAMLWriter
 
 
 class RecordingAdapter(BaseAdapter):
-    def __init__(
-        self,
-        load_result: Optional[Dict[str, Any]] = None,
-        dump_result: str = "",
-    ) -> None:
+    def __init__(self, load_result=None, dump_result=""):
         self.load_result = load_result or {"injected": True}
         self.dump_result = dump_result or "INJECTED=true\n"
-        self.last_raw: Optional[str] = None
-        self.last_data: Optional[Dict[str, Any]] = None
+        self.last_raw = None
+        self.last_data = None
 
-    def load(self, raw: str) -> Dict[str, Any]:
+    def load(self, raw):
         self.last_raw = raw
         return self.load_result
 
-    def dump(self, data: Dict[str, Any]) -> str:
+    def dump(self, data):
         self.last_data = data
         return self.dump_result
 
