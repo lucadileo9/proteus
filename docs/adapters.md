@@ -14,8 +14,8 @@ client code is affected.
 | Role      | Class                                    |
 |-----------|------------------------------------------|
 | Target    | `BaseAdapter` (abstract)                 |
-| Adapter   | `JSONAdapter`, `YAMLAdapter`, `EnvAdapter` |
-| Adaptee   | `json`, `yaml`, `dotenv`                 |
+| Adapter   | `JSONAdapter`, `YAMLAdapter`, `TOMLAdapter`, `EnvAdapter` |
+| Adaptee   | `json`, `yaml`, `tomllib/tomli`, `tomli-w`, `dotenv` |
 
 ## BaseAdapter
 
@@ -61,6 +61,13 @@ Both methods raise `ValueError` on failure.
 DATABASE__HOST=localhost
 DATABASE__PORT=5432
 ```
+
+### TOMLAdapter
+
+**Adaptee:** `tomllib` (Python 3.11+) or `tomli` (backport) / `tomli-w`
+
+- `load()`: delegates to `tomllib.loads()` or `tomli.loads()`. Rejects non-table roots.
+- `dump()`: delegates to `tomli_w.dumps()`.
 
 ## Error Handling
 

@@ -22,7 +22,7 @@
 | **Facade** | `ConfigurationManager` | Simple API over the full pattern stack |
 | **Factory Method** | `FormatCreator` and subclasses | Create the right Reader/Writer pair |
 | **Template Method** | `BaseReader`, `BaseWriter` | Fixed algorithm, format-specific steps |
-| **Adapter** | `BaseAdapter` and subclasses | Wrap `json`, `pyyaml`, `python-dotenv` |
+| **Adapter** | `BaseAdapter` and subclasses | Wrap `json`, `pyyaml`, `tomllib`, `dotenv` |
 
 ---
 
@@ -38,19 +38,22 @@ flowchart TD
 
     FC --> JC[JSONFormatCreator]
     FC --> YC[YAMLFormatCreator]
+    FC --> TC[TOMLFormatCreator]
     FC --> EC[EnvFormatCreator]
 
     JC --> JR[JSONReader] & JW[JSONWriter]
     YC --> YR[YAMLReader] & YW[YAMLWriter]
+    TC --> TR[TOMLReader] & TW[TOMLWriter]
     EC --> ER[EnvReader] & EW[EnvWriter]
 
     JR & JW --> JA[JSONAdapter wraps: json]
     YR & YW --> YA[YAMLAdapter wraps: pyyaml]
+    TR & TW --> TA[TOMLAdapter wraps: tomllib/tomli-w]
     ER & EW --> EA[EnvAdapter wraps: python-dotenv]
 ```
 
 ### Factory Method: FormatCreator
-`ConfigurationManager` uses the Abstract Factory pattern to select the appropriate `FormatCreator` based on file extension. Each `FormatCreator` knows how to create its own Reader and Writer, which in turn use Adapters to interact with third-party libraries.
+`ConfigurationManager` uses the Factory Method pattern to select the appropriate `FormatCreator` based on file extension. Each `FormatCreator` knows how to create its own Reader and Writer, which in turn use Adapters to interact with third-party libraries.
 
 ```mermaid
     classDiagram
@@ -75,6 +78,13 @@ flowchart TD
         +get_extensions() List~str~
     }
 
+    class TOMLFormatCreator {
+        <<Concrete Creator>>
+        +create_reader() TOMLReader
+        +create_writer() TOMLWriter
+        +get_extensions() List~str~
+    }
+
     class EnvFormatCreator {
         <<Concrete Creator>>
         +create_reader() EnvReader
@@ -84,12 +94,15 @@ flowchart TD
 
     FormatCreator <|-- JSONFormatCreator
     FormatCreator <|-- YAMLFormatCreator
+    FormatCreator <|-- TOMLFormatCreator
     FormatCreator <|-- EnvFormatCreator
 
     JSONFormatCreator ..> JSONReader : creates
     JSONFormatCreator ..> JSONWriter : creates
     YAMLFormatCreator ..> YAMLReader : creates
     YAMLFormatCreator ..> YAMLWriter : creates
+    TOMLFormatCreator ..> TOMLReader : creates
+    TOMLFormatCreator ..> TOMLWriter : creates
     EnvFormatCreator ..> EnvReader : creates
     EnvFormatCreator ..> EnvWriter : creates
 
@@ -120,6 +133,11 @@ classDiagram
         #_parse_content(raw : str) Dict
     }
 
+    class TOMLReader {
+        -_adapter : TOMLAdapter
+        #_parse_content(raw : str) Dict
+    }
+
     class BaseWriter {
         <<Abstract — Template Method>>
         +write(data : Dict, filepath : str) void
@@ -133,11 +151,18 @@ classDiagram
         #_serialize(data : Dict) str
     }
 
+    class TOMLWriter {
+        -_adapter : TOMLAdapter
+        #_serialize(data : Dict) str
+    }
+
     BaseReader <|-- JSONReader
     BaseReader <|-- YAMLReader
+    BaseReader <|-- TOMLReader
     BaseReader <|-- EnvReader
     BaseWriter <|-- JSONWriter
     BaseWriter <|-- YAMLWriter
+    BaseWriter <|-- TOMLWriter
     BaseWriter <|-- EnvWriter
 
     note for BaseReader "Template Method: parse()
@@ -153,7 +178,6 @@ classDiagram
     3. _write_file() ← common
     The variable step delegates to the Adapter."
 ```
-
 
 ### Adapter: BaseAdapter
 The Adapters wrap the third-party libraries and expose a consistent interface to the Readers/Writers. This isolates external dependencies and allows for easier maintenance or swapping of libraries in the future.
@@ -179,6 +203,12 @@ classDiagram
         +dump(data : Dict) str
     }
 
+    class TOMLAdapter {
+        <<Adapter>>
+        +load(raw : str) Dict
+        +dump(data : Dict) str
+    }
+
     class EnvAdapter {
         <<Adapter>>
         +load(raw : str) Dict
@@ -198,6 +228,16 @@ classDiagram
         +dump(data) str
     }
 
+    class toml_lib {
+        <<Adaptee — tomllib/tomli>>
+        +loads(s : str) Dict
+    }
+
+    class toml_w_lib {
+        <<Adaptee — tomli-w>>
+        +dumps(d : Dict) str
+    }
+
     class dotenv_lib {
         <<Adaptee — python-dotenv>>
         +dotenv_values(stream) OrderedDict
@@ -206,10 +246,13 @@ classDiagram
 
     BaseAdapter <|-- JSONAdapter
     BaseAdapter <|-- YAMLAdapter
+    BaseAdapter <|-- TOMLAdapter
     BaseAdapter <|-- EnvAdapter
 
     JSONAdapter ..> json_lib : wraps
     YAMLAdapter ..> yaml_lib : wraps
+    TOMLAdapter ..> toml_lib : wraps
+    TOMLAdapter ..> toml_w_lib : wraps
     EnvAdapter ..> dotenv_lib : wraps
 
     note for BaseAdapter "TARGET: uniform interface
@@ -231,7 +274,8 @@ All formats share a single common structure in memory: a plain Python `Dict[str,
 
 ```
 .json file  ──┐
-.yaml file  ──┤─── Reader.parse() ──► Dict[str, Any]  ──► Writer.write() ──► file
+.yaml file  ──┤
+.toml file  ──┤─── Reader.parse() ──► Dict[str, Any]  ──► Writer.write() ──► file
 .env file   ──┘          (IR)
 ```
 

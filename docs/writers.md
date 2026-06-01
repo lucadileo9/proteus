@@ -26,6 +26,7 @@ Defined in `src/proteus/writers/base.py`.
 |-------|--------|-------------|
 | `JSONWriter` | `writers/json_writer.py` | `JSONAdapter` |
 | `YAMLWriter` | `writers/yaml_writer.py` | `YAMLAdapter` |
+| `TOMLWriter` | `writers/toml_writer.py` | `TOMLAdapter` |
 | `EnvWriter`  | `writers/env_writer.py`  | `EnvAdapter`  |
 
 Each concrete writer:
