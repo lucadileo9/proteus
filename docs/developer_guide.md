@@ -4,6 +4,19 @@ This guide is intended for developers who want to contribute to Proteus or under
 
 ---
 
+## Educational Purpose
+
+This project was developed as part of a Software Engineering course to demonstrate:
+
+- **Design Patterns in Practice**: Real-world application of GoF patterns.
+- **SOLID Principles**: Clean architecture with clear responsibilities.
+- **Extensibility**: Open/Closed principle in action.
+- **Modular Design**: Separation of concerns and loose coupling.
+
+The codebase is intentionally structured to be readable and educational, with explicit pattern documentation in docstrings and clear separation between responsibilities. However, Proteus is designed for real-world use, solving actual problems in configuration management.
+
+---
+
 ## 🛠️ Development Workflow
 
 Proteus uses a `Makefile` to standardize common development tasks across different operating systems.
@@ -31,6 +44,19 @@ This command executes the following sequence:
 3. **`typecheck`**: Mypy verifies static type hints in `src/`.
 4. **`test`**: Pytest runs the full suite and verifies coverage (>95%).
 
+### Makefile Commands (Cross-platform)
+
+| Command | Description |
+|---------|-------------|
+| `make install-dev` | Install all development dependencies and pre-commit hooks |
+| `make test` | Run the test suite and generate coverage report |
+| `make lint` | Run Ruff to check for code style and logical errors |
+| `make format` | Automatically format code and fix linting issues |
+| `make typecheck` | Run Mypy to verify static type hints |
+| `make tox` | Run tests against all supported Python versions |
+| `make all` | Run format, lint, typecheck, and tests in sequence |
+| `make build` | Prepare the package for distribution (wheel/sdist) |
+
 ---
 
 ## 🔍 Toolchain Details
@@ -44,7 +70,7 @@ Proteus enforces strict typing in the `src/` directory. All public APIs must hav
 - **Pragmatic Testing**: To keep tests readable, Mypy is configured to be more lenient in the `tests/` directory (see [tests.md](tests.md)).
 
 ### Bandit (Security)
-Bandit scans the codebase for common security issues. It is integrated into the CI pipeline to ensure that no obvious vulnerabilities (like insecure YAML loading) are introduced.
+Bandit scans the codebase for common security issues. It is integrated into the CI pipeline to ensure that no obvious vulnerabilities are introduced.
 
 ### Tox (Cross-version Testing)
 While you develop on your local Python version, [Tox](https://tox.wiki/) allows you to test Proteus against multiple Python versions (3.8 through 3.12) simultaneously in isolated environments.
@@ -63,8 +89,6 @@ The GitHub Actions workflow (`.github/workflows/ci.yml`) uses an **Hybrid Strate
 | **Every Push** | Fast Test (Latest Python only) | 3 (Win, Linux, Mac) |
 | **Pull Request** | Full Matrix (All versions) | 15 (5 versions × 3 OS) |
 
-This ensures fast feedback during active development while guaranteeing absolute compatibility before merging into `develop` or `main`.
-
 ---
 
 ## 🤝 How to Contribute
@@ -74,3 +98,11 @@ This ensures fast feedback during active development while guaranteeing absolute
 3. **Keep Docs Updated**: If you change an API or add a format, update the relevant file in `docs/`.
 4. **Pass the Suite**: Ensure `make all` passes 100% on your machine.
 5. **Open a PR**: Target the `develop` branch for new features.
+
+---
+
+## Acknowledgments
+
+- **Gang of Four** - For the foundational design patterns.
+- **Python Community** - For excellent libraries and best practices.
+- **Software Engineering Course** - For inspiring this project.
