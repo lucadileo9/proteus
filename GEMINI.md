@@ -1,11 +1,12 @@
 # Proteus - Project Instructions
 
-Proteus is a unified configuration management library for Python. It provides a clean, pattern-based approach to managing application configurations across multiple formats (JSON, YAML, ENV) through a consistent API.
+Proteus is a unified configuration management library for Python. It provides a clean, pattern-based approach to managing application configurations across multiple formats (JSON, YAML, TOML, ENV) through a consistent API.
 
 ## Project Overview
 
+- **Status**: v0.2.0 (Release Candidate)
 - **Purpose**: Unified configuration management and translation.
-- **Technologies**: Python 3.8+, `pyyaml`, `python-dotenv`.
+- **Technologies**: Python 3.8+, `pyyaml`, `python-dotenv`, `tomli-w`, `tomli`.
 - **Architecture**: Heavily based on Gang of Four (GoF) design patterns:
     - **Facade (`ConfigurationManager`)**: Simplifies interaction with the complex pattern stack.
     - **Optional Singleton**: Thread-safe global instance via `ConfigurationManager.instance()`.
