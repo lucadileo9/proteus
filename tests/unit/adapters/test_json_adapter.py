@@ -93,3 +93,9 @@ class TestJSONAdapterDump:
         """Data survives a dump() → load() round-trip unchanged."""
         raw = self.adapter.dump(SAMPLE_NESTED)
         assert self.adapter.load(raw) == SAMPLE_NESTED
+
+    def test_dump_unserializable_raises_value_error(self):
+        """dump() raises ValueError for non-serializable objects (like set)."""
+        data = {"key": {1, 2, 3}}  # sets are not JSON serializable
+        with pytest.raises(ValueError, match="Cannot serialize to JSON"):
+            self.adapter.dump(data)

@@ -63,6 +63,23 @@ class TestSingleton:
         b = ConfigurationManager.instance()
         assert a is b
 
+    def test_instance_fast_path(self, monkeypatch):
+        """Calling instance() when it already exists avoids acquiring the lock."""
+        ConfigurationManager.instance()  # Create the instance
+
+        class MockLock:
+            def __enter__(self):
+                pytest.fail("Lock acquired despite instance existing")
+
+            def __exit__(self, *args):
+                pass
+
+        monkeypatch.setattr(ConfigurationManager, "_lock", MockLock())
+
+        # This call should hit the fast path and return immediately
+        inst = ConfigurationManager.instance()
+        assert inst is not None
+
     def test_thread_safety(self):
         """Singleton instances created from multiple threads are identical."""
         instances = []

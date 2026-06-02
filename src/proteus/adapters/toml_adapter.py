@@ -35,8 +35,6 @@ class TOMLAdapter(BaseAdapter):
         """
         try:
             data = tomllib.loads(raw)
-            if not isinstance(data, dict):
-                raise ValueError("TOML root must be a dictionary")
             return cast(Dict[str, Any], data)
         except Exception as e:
             raise ValueError(f"Invalid TOML content: {e}") from e

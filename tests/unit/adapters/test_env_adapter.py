@@ -1,3 +1,4 @@
+import pytest
 from sample_data import SAMPLE_ENV, SAMPLE_FLAT
 
 from proteus.adapters.env_adapter import EnvAdapter
@@ -118,3 +119,8 @@ class TestEnvAdapterDump:
         """None values in the dict are converted to empty strings."""
         raw = self.adapter.dump({"KEY": None})
         assert "KEY=" in raw
+
+    def test_load_non_string_raises_value_error(self):
+        """load() raises ValueError if input is not a string."""
+        with pytest.raises(ValueError, match="Invalid .env content"):
+            self.adapter.load(123)  # type: ignore

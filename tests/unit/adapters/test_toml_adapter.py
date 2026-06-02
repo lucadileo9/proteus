@@ -70,3 +70,14 @@ class TestTOMLAdapterDump:
         """Data survives a dump() → load() round-trip unchanged."""
         raw = self.adapter.dump(SAMPLE_NESTED)
         assert self.adapter.load(raw) == SAMPLE_NESTED
+
+    def test_dump_non_dict_raises_type_error(self):
+        """dump() raises TypeError if the root data is not a dictionary."""
+        with pytest.raises(TypeError, match="TOML serialization requires a dictionary"):
+            self.adapter.dump("not a dict")
+
+    def test_load_non_string_raises_value_error(self):
+        """load() raises ValueError if input is not a valid string (via catch-all)."""
+        with pytest.raises(ValueError, match="Invalid TOML content"):
+            # Passing something that tomllib.loads can't handle
+            self.adapter.load(None)  # type: ignore

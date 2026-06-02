@@ -106,3 +106,16 @@ class TestYAMLAdapterDump:
             line.split(":")[0] for line in raw.strip().splitlines() if ":" in line
         ]
         assert keys_in_output == ["zebra", "alpha", "middle"]
+
+    def test_dump_unserializable_raises_value_error(self, monkeypatch):
+        """dump() wraps yaml.YAMLError in a ValueError."""
+
+        # PyYAML is very robust and rarely fails natively on dump,
+        # so we mock it to simulate a library-level error.
+        def mock_dump(*args, **kwargs):
+            raise yaml.YAMLError("Mocked YAML error")
+
+        monkeypatch.setattr(yaml, "dump", mock_dump)
+
+        with pytest.raises(ValueError, match="Cannot serialize to YAML"):
+            self.adapter.dump({"key": "value"})
