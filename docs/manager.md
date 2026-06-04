@@ -123,6 +123,24 @@ Use this when you want the converted file to become part of the manager state.
 Register a custom `FormatCreator` at runtime for third-party formats.
 See [formats.md](formats.md#adding-a-new-format).
 
+### `register_adapter(extensions: List[str], adapter: BaseAdapter) → None`
+
+A high-level shortcut to register a custom format by providing only an
+Adapter implementation. This is the recommended way to extend Proteus
+unless you need highly custom Reader/Writer behavior.
+
+```python
+from proteus import ConfigurationManager, BaseAdapter
+
+class MyFormatAdapter(BaseAdapter):
+    def load(self, raw): ...
+    def dump(self, data): ...
+
+config = ConfigurationManager()
+config.register_adapter(extensions=[".myf"], adapter=MyFormatAdapter())
+config.load("settings.myf")
+```
+
 ### `reset() → None`
 
 Clear internal state (config data + loaded-file list). Does **not**
@@ -145,6 +163,12 @@ When the context exits, the manager resets its internal state.
 ### Path Support
 
 All path-based methods accept both strings and `pathlib.Path` objects.
+
+## Architectural Note: Generic Delegation
+
+To maintain a balance between **DRY (Don't Repeat Yourself)** and **Semantic Expressiveness**, Proteus uses a "Generic Delegation" strategy.
+
+Concrete classes like `JSONReader` inherit from a `GenericReader` which handles the boilerplate of delegating to an `Adapter`. This keeps the codebase small and easy to maintain while ensuring that users always have a clear, type-safe API for specific formats.
 
 ### `loaded_files() → List[str]`
 

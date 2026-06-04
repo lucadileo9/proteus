@@ -4,24 +4,25 @@ Concrete writer for JSON files.
 Delegates serialization to ``JSONAdapter`` — contains no direct ``json`` usage.
 """
 
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from ..adapters.base import BaseAdapter
 from ..adapters.json_adapter import JSONAdapter
-from .base import BaseWriter
+from .generic import GenericWriter
 
 
-class JSONWriter(BaseWriter):
+class JSONWriter(GenericWriter):
     """
-    JSON writer — Template Method concrete participant.
+    Concrete writer for JSON files.
 
-    Implements ``_serialize()`` by delegating to the JSONAdapter.
-    All JSON-specific serialization logic lives in the adapter, not here.
+    Inherits delegation logic from ``GenericWriter``.
     """
 
     def __init__(self, adapter: Optional[BaseAdapter] = None) -> None:
-        self._adapter = adapter or JSONAdapter()
+        """
+        Initialize the JSONWriter.
 
-    def _serialize(self, data: Dict[str, Any]) -> str:
-        """Delegate to JSONAdapter.dump()."""
-        return self._adapter.dump(data)
+        Args:
+            adapter: Optional custom adapter. Defaults to ``JSONAdapter``.
+        """
+        super().__init__(adapter=adapter or JSONAdapter())

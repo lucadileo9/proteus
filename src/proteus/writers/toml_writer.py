@@ -4,24 +4,25 @@ Concrete writer for TOML files.
 Delegates serialization to ``TOMLAdapter`` — contains no direct ``toml`` usage.
 """
 
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from ..adapters.base import BaseAdapter
 from ..adapters.toml_adapter import TOMLAdapter
-from .base import BaseWriter
+from .generic import GenericWriter
 
 
-class TOMLWriter(BaseWriter):
+class TOMLWriter(GenericWriter):
     """
-    TOML writer — Template Method concrete participant.
+    Concrete writer for TOML files.
 
-    Implements ``_serialize()`` by delegating to the TOMLAdapter.
-    All TOML-specific serialization logic lives in the adapter, not here.
+    Inherits delegation logic from ``GenericWriter``.
     """
 
     def __init__(self, adapter: Optional[BaseAdapter] = None) -> None:
-        self._adapter = adapter or TOMLAdapter()
+        """
+        Initialize the TOMLWriter.
 
-    def _serialize(self, data: Dict[str, Any]) -> str:
-        """Delegate to TOMLAdapter.dump()."""
-        return self._adapter.dump(data)
+        Args:
+            adapter: Optional custom adapter. Defaults to ``TOMLAdapter``.
+        """
+        super().__init__(adapter=adapter or TOMLAdapter())

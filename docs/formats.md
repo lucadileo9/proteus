@@ -27,8 +27,13 @@ Defined in `src/proteus/formats/base_format.py`.
 | `YAMLFormatCreator` | `.yaml`, `.yml` | `YAMLReader` | `YAMLWriter` |
 | `TOMLFormatCreator` | `.toml` | `TOMLReader` | `TOMLWriter` |
 | `EnvFormatCreator`  | `.env` | `EnvReader` | `EnvWriter` |
+| `GenericFormatCreator` | (User-defined) | `GenericReader` | `GenericWriter` |
 
-## How `translate()` Uses Two Creators
+## The Generic Format System
+
+To make Proteus easily extensible, we provide a **Generic Delegation** layer.
+
+`GenericFormatCreator` acts as a universal bridge: it takes any `BaseAdapter` and uses it to drive standard `GenericReader` and `GenericWriter` instances. This is what powers the `register_adapter()` shortcut.
 
 When translating between formats, two *different* creators collaborate:
 
@@ -40,21 +45,32 @@ translate("app.yaml", "app.json")
 
 ## Adding a New Format
 
-To add support for a new format (e.g. TOML):
+Proteus is designed to be easily extensible (Open/Closed Principle). You can add support for a new format in two ways:
 
-1. **Adapter** — Create `TOMLAdapter(BaseAdapter)` wrapping the TOML library.
-2. **Reader** — Create `TOMLReader(BaseReader)` using `TOMLAdapter`.
-3. **Writer** — Create `TOMLWriter(BaseWriter)` using `TOMLAdapter`.
-4. **Creator** — Create `TOMLFormatCreator(FormatCreator)` returning the new reader/writer and declaring `[".toml"]`.
-
-Register it at runtime:
+### 1. The Shortcut (Recommended)
+If you only need standard parsing and serialization, just implement a subclass of `BaseAdapter` and use `register_adapter()`. Proteus will automatically handle the Reader, Writer, and Factory layers for you.
 
 ```python
-from proteus import ConfigurationManager
+from proteus import ConfigurationManager, BaseAdapter
+
+class MyFormatAdapter(BaseAdapter):
+    def load(self, raw): ...
+    def dump(self, data): ...
 
 config = ConfigurationManager()
-config.register_creator(TOMLFormatCreator())
-config.load("settings.toml")  # works
+# Automatically creates a GenericFormatCreator for you
+config.register_adapter(extensions=[".myf"], adapter=MyFormatAdapter())
 ```
 
-No existing code needs to change (Open/Closed Principle).
+### 2. The Full Pattern Stack
+If you need highly custom behavior (e.g. specialized file validation or post-processing), you can implement the full stack manually:
+
+1. **Adapter** — Create `MyAdapter(BaseAdapter)`.
+2. **Reader** — Create `MyReader(BaseReader)` using your adapter.
+3. **Writer** — Create `MyWriter(BaseWriter)` using your adapter.
+4. **Creator** — Create `MyFormatCreator(FormatCreator)` returning your custom reader/writer.
+
+Register it at runtime:
+```python
+config.register_creator(MyFormatCreator())
+```

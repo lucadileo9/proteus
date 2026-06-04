@@ -418,10 +418,16 @@ class TestRegisterCreator:
         """Create a minimal FormatCreator for .dummy extension."""
 
         class DummyReader(BaseReader):
+            def __init__(self, adapter=None):
+                super().__init__(adapter=adapter)
+
             def _parse_content(self, raw):
                 return {"dummy": raw.strip()}
 
         class DummyWriter(BaseWriter):
+            def __init__(self, adapter=None):
+                super().__init__(adapter=adapter)
+
             def _serialize(self, data):
                 return str(data)
 

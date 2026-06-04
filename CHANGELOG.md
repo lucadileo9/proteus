@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `register_adapter()` shortcut in `ConfigurationManager` to register custom formats with zero boilerplate.
+- `04_custom_format.py` example showing how to easily extend Proteus with proprietary formats.
+
+### Changed
+- Refactored internal delegation architecture: moved `GenericReader`, `GenericWriter`, and `GenericFormatCreator` into dedicated `generic.py` modules.
+- Optimized `README.md` for PyPI presentation by prioritizing installation instructions and using absolute links for documentation.
+- Streamlined testing by dropping strict type hints in test files in favor of readability.
+- Modularized `tests/` into `unit/` and `integration/` subdirectories for better navigability.
+
+### Fixed
+- Corrected package-level imports for better public API accessibility.
+
 
 ## [0.2.0] - 2026-06-01
 ### Added

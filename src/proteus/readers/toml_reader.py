@@ -4,24 +4,25 @@ Concrete reader for TOML files.
 Delegates parsing to ``TOMLAdapter`` — contains no direct ``toml`` usage.
 """
 
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from ..adapters.base import BaseAdapter
 from ..adapters.toml_adapter import TOMLAdapter
-from .base import BaseReader
+from .generic import GenericReader
 
 
-class TOMLReader(BaseReader):
+class TOMLReader(GenericReader):
     """
-    TOML reader — Template Method concrete participant.
+    Concrete reader for TOML files.
 
-    Implements ``_parse_content()`` by delegating to the TOMLAdapter.
-    All TOML-specific parsing logic lives in the adapter, not here.
+    Inherits delegation logic from ``GenericReader``.
     """
 
     def __init__(self, adapter: Optional[BaseAdapter] = None) -> None:
-        self._adapter = adapter or TOMLAdapter()
+        """
+        Initialize the TOMLReader.
 
-    def _parse_content(self, raw: str) -> Dict[str, Any]:
-        """Delegate to TOMLAdapter.load()."""
-        return self._adapter.load(raw)
+        Args:
+            adapter: Optional custom adapter. Defaults to ``TOMLAdapter``.
+        """
+        super().__init__(adapter=adapter or TOMLAdapter())

@@ -4,24 +4,25 @@ Concrete writer for .env files.
 Delegates serialization to ``EnvAdapter`` — contains no direct ``dotenv`` usage.
 """
 
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from ..adapters.base import BaseAdapter
 from ..adapters.env_adapter import EnvAdapter
-from .base import BaseWriter
+from .generic import GenericWriter
 
 
-class EnvWriter(BaseWriter):
+class EnvWriter(GenericWriter):
     """
-    .env writer — Template Method concrete participant.
+    Concrete writer for .env files.
 
-    Implements ``_serialize()`` by delegating to the EnvAdapter.
-    All .env-specific serialization logic lives in the adapter, not here.
+    Inherits delegation logic from ``GenericWriter``.
     """
 
     def __init__(self, adapter: Optional[BaseAdapter] = None) -> None:
-        self._adapter = adapter or EnvAdapter()
+        """
+        Initialize the EnvWriter.
 
-    def _serialize(self, data: Dict[str, Any]) -> str:
-        """Delegate to EnvAdapter.dump()."""
-        return self._adapter.dump(data)
+        Args:
+            adapter: Optional custom adapter. Defaults to ``EnvAdapter``.
+        """
+        super().__init__(adapter=adapter or EnvAdapter())

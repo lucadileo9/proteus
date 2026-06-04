@@ -24,6 +24,10 @@ Defined in `src/proteus/readers/base.py`.
 **Hook** means the method has a default implementation but can be overridden.
 **Abstract** means the method *must* be implemented by every subclass.
 
+**`GenericReader`**: Implements the variable `_parse_content` step by delegating directly to `self._adapter.load()`. Most formats use this "bridge".
+**Concrete Readers**: (e.g. `JSONReader`, `YAMLReader`) inherit from `GenericReader`. They serve as **semantic shells** that specify a default adapter while allowing for future format-specific hooks.
+
+
 ## Concrete Readers
 
 | Class | Module | Adapter Used |
