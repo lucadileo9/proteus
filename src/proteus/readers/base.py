@@ -12,7 +12,10 @@ Subclasses override only ``_parse_content()``, delegating to their Adapter.
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import TYPE_CHECKING, Any, Dict, Union
+
+if TYPE_CHECKING:
+    from ..adapters.base import BaseAdapter
 
 
 class BaseReader(ABC):
@@ -27,6 +30,19 @@ class BaseReader(ABC):
         - Instantiate the matching Adapter in ``__init__``.
         - Implement ``_parse_content()`` by calling ``self._adapter.load(raw)``.
     """
+
+    # ------------------------------------------------------------------ #
+    # Lifecycle                                                           #
+    # ------------------------------------------------------------------ #
+
+    def __init__(self, adapter: "BaseAdapter") -> None:
+        """
+        Initialize the reader with an adapter.
+
+        Args:
+            adapter: The concrete adapter to use for parsing.
+        """
+        self._adapter = adapter
 
     # ------------------------------------------------------------------ #
     # Template Method (public — do NOT override)                          #
