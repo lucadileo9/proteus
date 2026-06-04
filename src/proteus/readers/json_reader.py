@@ -4,24 +4,25 @@ Concrete reader for JSON files.
 Delegates parsing to ``JSONAdapter`` — contains no direct ``json`` usage.
 """
 
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from ..adapters.base import BaseAdapter
 from ..adapters.json_adapter import JSONAdapter
-from .base import BaseReader
+from .generic import GenericReader
 
 
-class JSONReader(BaseReader):
+class JSONReader(GenericReader):
     """
-    JSON reader — Template Method concrete participant.
+    Concrete reader for JSON files.
 
-    Implements ``_parse_content()`` by delegating to the JSONAdapter.
-    All JSON-specific parsing logic lives in the adapter, not here.
+    Inherits delegation logic from ``GenericReader``.
     """
 
     def __init__(self, adapter: Optional[BaseAdapter] = None) -> None:
-        self._adapter = adapter or JSONAdapter()
+        """
+        Initialize the JSONReader.
 
-    def _parse_content(self, raw: str) -> Dict[str, Any]:
-        """Delegate to JSONAdapter.load()."""
-        return self._adapter.load(raw)
+        Args:
+            adapter: Optional custom adapter. Defaults to ``JSONAdapter``.
+        """
+        super().__init__(adapter=adapter or JSONAdapter())
