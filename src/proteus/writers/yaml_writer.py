@@ -4,24 +4,25 @@ Concrete writer for YAML files.
 Delegates serialization to ``YAMLAdapter`` — contains no direct ``yaml`` usage.
 """
 
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from ..adapters.base import BaseAdapter
 from ..adapters.yaml_adapter import YAMLAdapter
-from .base import BaseWriter
+from .generic import GenericWriter
 
 
-class YAMLWriter(BaseWriter):
+class YAMLWriter(GenericWriter):
     """
-    YAML writer — Template Method concrete participant.
+    Concrete writer for YAML files.
 
-    Implements ``_serialize()`` by delegating to the YAMLAdapter.
-    All YAML-specific serialization logic lives in the adapter, not here.
+    Inherits delegation logic from ``GenericWriter``.
     """
 
     def __init__(self, adapter: Optional[BaseAdapter] = None) -> None:
-        self._adapter = adapter or YAMLAdapter()
+        """
+        Initialize the YAMLWriter.
 
-    def _serialize(self, data: Dict[str, Any]) -> str:
-        """Delegate to YAMLAdapter.dump()."""
-        return self._adapter.dump(data)
+        Args:
+            adapter: Optional custom adapter. Defaults to ``YAMLAdapter``.
+        """
+        super().__init__(adapter=adapter or YAMLAdapter())
