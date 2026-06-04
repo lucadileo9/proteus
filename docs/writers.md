@@ -20,6 +20,10 @@ Defined in `src/proteus/writers/base.py`.
 | 2 | `_serialize(data)` | **Abstract** | Converts the IR dict into a format-specific string. |
 | 3 | `_write_file(content, filepath)` | Hook | Writes the string to disk as UTF-8. |
 
+**`GenericWriter`**: Implements the variable `_serialize` step by delegating directly to `self._adapter.dump()`. Most formats use this "bridge".
+**Concrete Writers**: (e.g. `JSONWriter`, `YAMLWriter`) inherit from `GenericWriter`. They serve as **semantic shells** that specify a default adapter.
+
+
 ## Concrete Writers
 
 | Class | Module | Adapter Used |
