@@ -27,11 +27,12 @@ Typical usage::
 import copy
 import threading
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
 
 from .adapters.base import BaseAdapter
 from .exceptions import (
     ConfigurationNotLoadedError,
+    ConfigurationTypeError,
     InvalidKeyError,
     UnsupportedFormatError,
 )
@@ -41,6 +42,8 @@ from .formats.generic import GenericFormatCreator
 from .formats.json_format import JSONFormatCreator
 from .formats.toml_format import TOMLFormatCreator
 from .formats.yaml_format import YAMLFormatCreator
+
+T = TypeVar("T")
 
 
 class ConfigurationManager:
@@ -211,20 +214,27 @@ class ConfigurationManager:
         """
         self.load(filepath)
 
-    def get(self, key: str, default: Any = None) -> Any:
+    def get(
+        self,
+        key: str,
+        default: Any = None,
+        cast: Optional[Callable[[Any], T]] = None,
+    ) -> Union[T, Any]:
         """
         Access a configuration value via dot-notation.
 
         Args:
             key: Dot-separated key path (e.g. ``"database.host"``).
             default: Value to return if the key is not found.
+            cast: Optional callable to convert the value to a specific type.
 
         Returns:
-            The configuration value, or *default*.
+            The configuration value optionally cast, or *default*.
 
         Raises:
             InvalidKeyError: If the key is empty or malformed.
             ConfigurationNotLoadedError: If no file has been loaded yet.
+            ConfigurationTypeError: If the value cannot be cast to the specified type.
         """
         self._validate_key(key)
         if not self._config:
@@ -234,11 +244,33 @@ class ConfigurationManager:
 
         parts = key.split(".")
         value: Any = self._config
+        found = True
         for part in parts:
             if isinstance(value, dict) and part in value:
                 value = value[part]
             else:
-                return default
+                found = False
+                break
+
+        if not found:
+            return default
+
+        if cast is not None:
+            # Special handling for bool to avoid bool("False") == True
+            if cast is bool and isinstance(value, str):
+                v_lower = value.strip().lower()
+                if v_lower in ("true", "1", "yes", "on", "y"):
+                    return True
+                if v_lower in ("false", "0", "no", "off", "n", ""):
+                    return False
+
+            try:
+                value = cast(value)
+            except (ValueError, TypeError) as e:
+                raise ConfigurationTypeError(
+                    f"Cannot cast value '{value}' for key '{key}' to expected type: {e}"
+                ) from e
+
         return value
 
     def get_all(self) -> Dict[str, Any]:
