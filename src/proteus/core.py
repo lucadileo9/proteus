@@ -29,6 +29,7 @@ import threading
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
+from .adapters.base import BaseAdapter
 from .exceptions import (
     ConfigurationNotLoadedError,
     InvalidKeyError,
@@ -36,6 +37,7 @@ from .exceptions import (
 )
 from .formats.base_format import FormatCreator
 from .formats.env_format import EnvFormatCreator
+from .formats.generic import GenericFormatCreator
 from .formats.json_format import JSONFormatCreator
 from .formats.toml_format import TOMLFormatCreator
 from .formats.yaml_format import YAMLFormatCreator
@@ -136,6 +138,20 @@ class ConfigurationManager:
         """
         for ext in creator.get_extensions():
             self._creators[ext] = creator
+
+    def register_adapter(self, extensions: List[str], adapter: BaseAdapter) -> None:
+        """
+        Register a custom format by providing only an Adapter.
+
+        This is a high-level shortcut that automatically creates a
+        GenericFormatCreator for you.
+
+        Args:
+            extensions: List of file extensions (e.g. [".ini"]).
+            adapter: A subclass of ``BaseAdapter``.
+        """
+        creator = GenericFormatCreator(extensions, adapter)
+        self.register_creator(creator)
 
     def _get_creator(self, filepath: Union[str, Path]) -> FormatCreator:
         """
