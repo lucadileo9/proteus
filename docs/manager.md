@@ -83,14 +83,25 @@ Values from the new file win on conflict.
 Alias for `load()` — semantically clearer when merging multiple sources.
 
 
-### `get(key: str, default=None) → Any`
+### `get(key: str, default=None, cast: Optional[Callable[[Any], Any]] = None) → Any`
 
-Access a value via **dot-notation**.
+Access a value via **dot-notation**. Optionally provide a `cast` callable
+to coerce the returned value to a desired type (useful when values
+originate from string-only formats such as `.env`). The `cast` argument
+accepts any callable (for example `int`, `float`, or a custom function).
 
 ```python
-config.get("database.host")       # nested access
-config.get("missing.key", "N/A")  # returns default
+config.get("database.host")                # nested access
+config.get("missing.key", "N/A")         # returns default
+config.get("port", cast=int)               # cast the value to int
+config.get("feature.enabled", cast=bool)   # smart bool parsing
 ```
+
+When a `cast` is provided and conversion fails, a `ConfigurationTypeError`
+is raised. Note: `bool("False")` in Python evaluates to `True`, so
+Proteus performs a small convenience mapping when `cast=bool` is used on
+string values (recognizes common truthy/falsey literals such as
+`"true"`, `"false"`, `"1"`, `"0"`, `"yes"`, `"no"`).
 
 Raises `ConfigurationNotLoadedError` if no file has been loaded yet.
 
@@ -197,5 +208,6 @@ config.get_all()
 | `UnsupportedFormatError` | No creator registered for the file extension. |
 | `InvalidKeyError` | Raised when a dot-notation key is empty or malformed. |
 | `ConfigurationNotLoadedError` | `get()` called before any `load()`. |
+| `ConfigurationTypeError` | Raised when a value cannot be cast to the requested type using `cast` in `get()`. |
 
 All exceptions are importable from the `proteus` package.

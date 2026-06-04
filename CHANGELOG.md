@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Type casting support in `ConfigurationManager.get()` with the new `cast` parameter.
+- Smart boolean casting (supports "true", "1", "yes", "on", "false", "0", "no", "off").
+- New `ConfigurationTypeError` exception for failed casting attempts.
 - `register_adapter()` shortcut in `ConfigurationManager` to register custom formats with zero boilerplate.
 - `04_custom_format.py` example showing how to easily extend Proteus with proprietary formats.
 

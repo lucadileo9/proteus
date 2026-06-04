@@ -204,6 +204,66 @@ class TestLoadAndGet:
 
 
 # ================================================================== #
+# type casting                                                        #
+# ================================================================== #
+
+
+class TestTypeCasting:
+    """Integration tests for the `cast` parameter in config.get()."""
+
+    def test_successful_cast(self, tmp_path):
+        env_file = tmp_path / "app.env"
+        env_file.write_text("PORT=8080\nDEBUG=true\n", encoding="utf-8")
+        mgr = ConfigurationManager()
+        mgr.load(str(env_file))
+
+        # Check types before cast return as strings
+        assert mgr.get("PORT") == "8080"
+        assert type(mgr.get("PORT")) is str
+
+        # Check types after cast
+        assert mgr.get("PORT", cast=int) == 8080
+        assert type(mgr.get("PORT", cast=int)) is int
+
+    def test_bool_smart_cast(self, tmp_path):
+        env_file = tmp_path / "app.env"
+        # .env loader flats strings, so all values are strings originally
+        env_file.write_text(
+            "IS_ON=yes\nIS_OFF=0\nIS_FALSE=False\nIS_EMPTY=\n", encoding="utf-8"
+        )
+        mgr = ConfigurationManager()
+        mgr.load(str(env_file))
+
+        assert mgr.get("IS_ON", cast=bool) is True
+        assert mgr.get("IS_OFF", cast=bool) is False
+        assert mgr.get("IS_FALSE", cast=bool) is False
+        assert mgr.get("IS_EMPTY", cast=bool) is False
+
+    def test_failed_cast_raises_error(self, tmp_path):
+        env_file = tmp_path / "app.env"
+        env_file.write_text("PORT=abc\n", encoding="utf-8")
+        mgr = ConfigurationManager()
+        mgr.load(str(env_file))
+
+        from proteus.exceptions import ConfigurationTypeError
+
+        with pytest.raises(ConfigurationTypeError) as exc:
+            mgr.get("PORT", cast=int)
+
+        assert "Cannot cast value" in str(exc.value)
+        assert "'abc'" in str(exc.value)
+
+    def test_cast_ignored_if_default_used(self, tmp_path):
+        mgr = ConfigurationManager()
+        env_file = tmp_path / "app.env"
+        env_file.write_text("X=1\n", encoding="utf-8")
+        mgr.load(str(env_file))
+
+        # When key doesn't exist, default is returned without casting
+        assert mgr.get("MISSING", default="123", cast=int) == "123"
+
+
+# ================================================================== #
 # merge() + deep-merge semantics                                      #
 # ================================================================== #
 
