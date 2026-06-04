@@ -30,14 +30,16 @@ from .exceptions import (
     UnsupportedFormatError,
 )
 from .formats.base_format import FormatCreator
+from .formats.generic import GenericFormatCreator
 from .readers.base import BaseReader
 from .writers.base import BaseWriter
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "ConfigurationManager",
     "FormatCreator",
+    "GenericFormatCreator",
     "BaseReader",
     "BaseWriter",
     "BaseAdapter",
