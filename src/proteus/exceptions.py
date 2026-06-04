@@ -86,3 +86,18 @@ class ConfigurationNotLoadedError(ConfigurationError):
     """
 
     pass
+
+
+class ConfigurationTypeError(ConfigurationError):
+    """
+    Raised when a configuration value fails to cast to the specified type.
+
+    This exception is raised by ConfigurationManager.get(key, cast=...)
+    when the cast function raises a ValueError or TypeError.
+
+    Example:
+        >>> config.get('port', cast=int)  # where port is "abc"
+        ConfigurationTypeError: Cannot cast value 'abc' for key 'port' to expected type.
+    """
+
+    pass

@@ -26,6 +26,7 @@ from .core import ConfigurationManager
 from .exceptions import (
     ConfigurationError,
     ConfigurationNotLoadedError,
+    ConfigurationTypeError,
     InvalidKeyError,
     UnsupportedFormatError,
 )
@@ -47,4 +48,5 @@ __all__ = [
     "UnsupportedFormatError",
     "InvalidKeyError",
     "ConfigurationNotLoadedError",
+    "ConfigurationTypeError",
 ]
