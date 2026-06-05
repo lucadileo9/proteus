@@ -83,9 +83,44 @@ Values from the new file win on conflict.
 Alias for `load()` — semantically clearer when merging multiple sources.
 
 
-### `get(key: str, default=None, cast: Optional[Callable[[Any], Any]] = None) → Any`
+### `set(key: str, value: Any) → None`
 
-Access a value via **dot-notation**. Optionally provide a `cast` callable
+Modify an existing value or add a new one using dot-notation. Intermediate
+dictionaries are created automatically if they do not exist.
+
+```python
+config.set("server.timeout", 60)
+config.set("meta.author.name", "Luca") # auto-creates 'meta' and 'author' dicts
+```
+
+Raises `ConfigurationConflictError` if you attempt to nest a key inside
+an existing non-dictionary value (e.g. if `a=10`, `set("a.b", 5)` will fail).
+
+### `save(filepath: str | Path) → None`
+
+Persist the entire internal configuration state to a file. The output
+format is automatically detected from the file extension.
+
+```python
+config.save("config_backup.toml")
+config.save("config_export.json")
+```
+
+
+### `get(key: str, default=None, cast: Optional[Callable[[Any], T]] = None) → Union[T, Any]`
+
+Access a configuration value via dot-notation.
+
+**Unified ENV Experience**:
+Thanks to automatic unflattening, you can use the same dot-notation for ENV files:
+```python
+# In .env: DB__HOST=localhost
+config.load(".env")
+config.get("DB.HOST") # Works!
+```
+
+Optionally provide a `cast` callable...
+
 to coerce the returned value to a desired type (useful when values
 originate from string-only formats such as `.env`). The `cast` argument
 accepts any callable (for example `int`, `float`, or a custom function).
