@@ -354,9 +354,11 @@ class TestEnvFormatCreator:
 
     def test_reader_parses_env(self, env_file):
         """Reader created by the factory parses an .env file correctly."""
+        from sample_data import SAMPLE_ENV_NESTED
+
         reader = self.creator.create_reader()
         result = reader.parse(env_file)
-        assert result == SAMPLE_FLAT
+        assert result == SAMPLE_ENV_NESTED
 
     def test_writer_writes_env(self, env_output):
         """Writer created by the factory writes a valid .env file."""
@@ -425,13 +427,15 @@ class TestCrossFormatTranslation:
 
     def test_env_to_json(self, env_file, json_output):
         """Translate ENV → JSON through factory-created pairs."""
+        from sample_data import SAMPLE_ENV_NESTED
+
         reader = EnvFormatCreator().create_reader()
         writer = JSONFormatCreator().create_writer()
 
         data = reader.parse(env_file)
         writer.write(data, str(json_output))
 
-        assert json.loads(json_output.read_text(encoding="utf-8")) == SAMPLE_FLAT
+        assert json.loads(json_output.read_text(encoding="utf-8")) == SAMPLE_ENV_NESTED
 
     def test_yaml_to_env(self, yaml_file, env_output):
         """Translate YAML (nested) → ENV through factory-created pairs."""
