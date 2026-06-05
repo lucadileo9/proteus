@@ -1,0 +1,39 @@
+APP_NAME = "proteus-demo"
+VERSION = "1.0.0"
+DEBUG = "false"
+app_name = "proteus-demo"
+version = "1.0.0"
+debug = false
+
+[SERVER]
+HOST = "0.0.0.0"
+PORT = "8080"
+
+[DATABASE]
+HOST = "localhost"
+PORT = "5432"
+NAME = "mydb"
+USER = "admin"
+PASSWORD = "secret"
+
+[LOGGING]
+LEVEL = "INFO"
+FILE = "app.log"
+
+[app]
+debug = "true"
+
+[server]
+host = "0.0.0.0"
+port = 8080
+
+[database]
+host = "localhost"
+port = 5432
+name = "mydb"
+user = "admin"
+password = "secret"
+
+[logging]
+level = "INFO"
+file = "app.log"
