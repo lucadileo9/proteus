@@ -35,7 +35,7 @@ from .formats.generic import GenericFormatCreator
 from .readers.base import BaseReader
 from .writers.base import BaseWriter
 
-__version__ = "0.2.0"
+__version__ = "1.0.0"
 
 Proteus = ConfigurationManager  # Alias per chi preferisce un'API più compatta
 
