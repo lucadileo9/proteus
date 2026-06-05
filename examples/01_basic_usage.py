@@ -34,10 +34,10 @@ def main() -> None:
     print("\n--- 4. ENV Loading (Flat to Nested) ---")
     config.load("examples/configs/app.env")
     # Proteus supports standard ENV nesting using __ separator
-    print(f"DB Host : {config.get('DATABASE__HOST')}")
-    print(f"DB Name : {config.get('DATABASE__NAME')}")
+    print(f"DB Host : {config.get('DATABASE.HOST')}")
+    print(f"DB Name : {config.get('DATABASE.NAME')}")
 
-    print("\n✅ All formats loaded successfully using the same Facade API!")
+    print("\nAll formats loaded successfully using the same Facade API!")
 
 
 if __name__ == "__main__":

@@ -73,7 +73,7 @@ def main() -> None:
     print(f"Loading generated file... Found APP_NAME: {app_name}")
 
     print(
-        "\n✅ All translations verified! Proteus maintained "
+        "\nAll translations verified! Proteus maintained "
         + "data integrity across all formats."
     )
 
