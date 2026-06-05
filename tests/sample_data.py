@@ -23,6 +23,19 @@ SAMPLE_NESTED = {
     },
 }
 
+# The expected IR after unflattening SAMPLE_ENV
+# Note: all values remain strings as per .env format
+SAMPLE_ENV_NESTED = {
+    "DB": {
+        "HOST": "localhost",
+        "PORT": "5432",
+    },
+    "APP": {
+        "NAME": "Proteus",
+    },
+    "DEBUG": "true",
+}
+
 SAMPLE_FLAT = {
     "DB_HOST": "localhost",
     "DB_PORT": "5432",
@@ -76,9 +89,9 @@ YAML_SCALAR_ROOT = "just a string"
 # ENV content                                                         #
 # ------------------------------------------------------------------ #
 
-SAMPLE_ENV = """DB_HOST=localhost
-DB_PORT=5432
-APP_NAME=Proteus
+SAMPLE_ENV = """DB__HOST=localhost
+DB__PORT=5432
+APP__NAME=Proteus
 DEBUG=true
 """
 

@@ -306,19 +306,11 @@ Both JSON and YAML map naturally to nested Python dicts:
 
 ### Flat format (ENV)
 
-The `.env` format has no native nesting. On **write**, nested keys are flattened using `__` as separator and uppercased. On **read**, the dict stays flat — the `__` is never reconstructed back into nesting.
+The `.env` format has no native nesting. To maintain a unified experience, Proteus uses the `__` separator convention:
+- **On Write**: Nested dictionaries are flattened (e.g. `{"DB": {"HOST": "..."}}` → `DB__HOST=...`).
+- **On Read**: Flat keys are automatically **unflattened** back into dictionaries.
 
-```python
-# IR going IN to an ENV writer (nested source)
-{"database": {"host": "localhost", "port": 5432}}
-
-# Result written to .env file
-# DATABASE__HOST=localhost
-# DATABASE__PORT=5432
-
-# IR coming OUT of an ENV reader (always flat)
-{"DATABASE__HOST": "localhost", "DATABASE__PORT": "5432"}
-```
+This ensures that `config.get("DB.HOST")` works regardless of the source format.
 
 ### Accessing the IR
 

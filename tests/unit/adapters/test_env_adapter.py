@@ -11,14 +11,29 @@ class TestEnvAdapterLoad:
         self.adapter = EnvAdapter()
 
     def test_load_valid(self):
-        """load() parses valid .env content and returns the expected flat dict."""
+        """load() parses valid .env content and unflattens it into nested dicts."""
+        from sample_data import SAMPLE_ENV_NESTED
+
         result = self.adapter.load(SAMPLE_ENV)
-        assert result == SAMPLE_FLAT
+        assert result == SAMPLE_ENV_NESTED
+
+    def test_load_unflattens_keys(self):
+        """Keys with '__' are reconstructed into nested dictionaries."""
+        raw = "A__B__C=value\n"
+        result = self.adapter.load(raw)
+        assert result == {"A": {"B": {"C": "value"}}}
+
+    def test_load_preserves_case(self):
+        """ENV keys preserve their casing during unflattening."""
+        raw = "My_App_Name=Proteus\n"
+        result = self.adapter.load(raw)
+        assert "My_App_Name" in result
+        assert "my_app_name" not in result
 
     def test_load_returns_dict(self):
         """load() always returns a dict for valid .env content."""
         result = self.adapter.load("KEY=value\n")
-        assert isinstance(result, dict)
+        assert result == {"KEY": "value"}
 
     def test_load_values_are_strings(self):
         """All parsed values remain strings, even if they look numeric or boolean."""

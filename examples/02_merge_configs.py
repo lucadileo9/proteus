@@ -33,8 +33,8 @@ def main() -> None:
     config.merge("examples/configs/app.env")
     # Values from .env now win
     print(f"Final App Name: {config.get('APP_NAME')}")
-    print(f"Final DB User : {config.get('DATABASE__USER')}")
-    print(f"Final DB port : {config.get('DATABASE__PORT')}")
+    print(f"Final DB User : {config.get('DATABASE.USER')}")
+    print(f"Final DB port : {config.get('DATABASE.PORT')}")
 
     config.reset()
 

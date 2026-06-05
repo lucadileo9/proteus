@@ -50,16 +50,18 @@ Both methods raise `ValueError` on failure.
 
 **Adaptee:** `dotenv` (python-dotenv) — `dotenv_values`
 
-- `load()`: delegates to `dotenv_values(stream=...)`. Returns `Dict[str, str]` — all values are strings. Keys with no value map to `""`.
+- `load()`: delegates to `dotenv_values(stream=...)`. It automatically **unflattens** keys using the `__` separator. Casing is preserved (typically UPPER_CASE).
 - `dump()`: flattens nested dicts with `__` separator, converts keys to `UPPER_CASE`, and auto-quotes values containing spaces or special characters.
 
-**Flattening example:**
+**Nesting / Flattening example:**
 
 ```python
-{"database": {"host": "localhost", "port": 5432}}
-# becomes
-DATABASE__HOST=localhost
-DATABASE__PORT=5432
+# In a .env file:
+# DATABASE__HOST=localhost
+# APP__DEBUG=true
+
+config.load(".env")
+config.get("DATABASE.HOST") # → "localhost"
 ```
 
 ### TOMLAdapter
