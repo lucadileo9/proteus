@@ -1,0 +1,24 @@
+app_name = "Proteus Powered App"
+version = "1.0.0"
+debug = false
+
+[server]
+host = "0.0.0.0"
+port = 9000
+
+[database]
+host = "localhost"
+port = 5432
+name = "mydb"
+user = "admin"
+password = "secret"
+
+[logging]
+level = "INFO"
+file = "app.log"
+
+[meta]
+author = "Luca Di Leo"
+
+[meta.version]
+major = 2
