@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-06-05
+### Added
+- Stateless Command Line Interface (CLI) accessible via the `proteus` command.
+- CLI commands: `get`, `set`, `merge`, `translate`, `view`, `list-files`.
+- Integration test suite for CLI verification.
+- Comprehensive CLI documentation (`docs/cli.md`).
+
 ## [1.0.0] - 2026-06-05
 ### Added
 - `Proteus` alias for `ConfigurationManager` for a more concise API.
