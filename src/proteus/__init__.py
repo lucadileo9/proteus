@@ -37,8 +37,11 @@ from .writers.base import BaseWriter
 
 __version__ = "0.2.0"
 
+Proteus = ConfigurationManager  # Alias per chi preferisce un'API più compatta
+
 __all__ = [
     "ConfigurationManager",
+    "Proteus",
     "FormatCreator",
     "GenericFormatCreator",
     "BaseReader",

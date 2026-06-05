@@ -4,7 +4,7 @@
 
 ## Overview
 
-`ConfigurationManager` is the central entry point of Proteus. It maintains
+`ConfigurationManager` (also available as `Proteus`) is the central entry point of Proteus. It maintains
 a single configuration state (the IR — `Dict[str, Any]`) and exposes
 high-level operations that internally orchestrate Factory Method, Template
 Method, and Adapter.
