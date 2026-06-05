@@ -204,6 +204,79 @@ class TestLoadAndGet:
 
 
 # ================================================================== #
+# set() + save()                                                      #
+# ================================================================== #
+
+
+class TestSetAndSave:
+    """Test modification and persistence functionality."""
+
+    def test_set_new_top_level_key(self):
+        """set() creates a new top-level key."""
+        mgr = ConfigurationManager()
+        mgr.set("new_key", "value")
+        assert mgr.get("new_key") == "value"
+
+    def test_set_nested_key_auto_creates_dicts(self):
+        """set() automatically creates intermediate dictionaries."""
+        mgr = ConfigurationManager()
+        mgr.set("a.b.c", 42)
+        assert mgr.get("a.b.c") == 42
+        assert isinstance(mgr.get("a"), dict)
+        assert isinstance(mgr.get("a.b"), dict)
+
+    def test_set_overwrites_existing_scalar(self):
+        """set() overwrites an existing scalar value."""
+        mgr = ConfigurationManager()
+        mgr.set("key", "old")
+        mgr.set("key", "new")
+        assert mgr.get("key") == "new"
+
+    def test_set_conflict_raises_error(self):
+        """set() raises ConfigurationConflictError when nesting inside a scalar."""
+        mgr = ConfigurationManager()
+        mgr.set("a", 10)
+        from proteus.exceptions import ConfigurationConflictError
+
+        with pytest.raises(ConfigurationConflictError, match="not a dictionary"):
+            mgr.set("a.b", 5)
+
+    def test_save_persists_to_file(self, tmp_path):
+        """save() writes the current state to a file in the chosen format."""
+        mgr = ConfigurationManager()
+        mgr.set("app.name", "SavedApp")
+        mgr.set("port", 1234)
+
+        path = tmp_path / "config.json"
+        mgr.save(str(path))
+
+        # Verify with a fresh reader
+        import json
+
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+        assert data == {"app": {"name": "SavedApp"}, "port": 1234}
+
+    def test_save_different_formats(self, tmp_path):
+        """save() supports all registered formats."""
+        mgr = ConfigurationManager()
+        mgr.set("key", "value")
+
+        yaml_path = tmp_path / "out.yaml"
+        toml_path = tmp_path / "out.toml"
+
+        mgr.save(str(yaml_path))
+        mgr.save(str(toml_path))
+
+        assert yaml_path.exists()
+        assert toml_path.exists()
+
+        # Quick check for TOML content
+        content = toml_path.read_text(encoding="utf-8")
+        assert 'key = "value"' in content
+
+
+# ================================================================== #
 # type casting                                                        #
 # ================================================================== #
 
