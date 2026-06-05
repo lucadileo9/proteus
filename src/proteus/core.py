@@ -170,12 +170,20 @@ class ConfigurationManager:
         Raises:
             UnsupportedFormatError: If no creator is registered for the extension.
         """
-        ext = Path(filepath).suffix.lower()
+        path = Path(filepath)
+        # Try finding by suffix first (standard case: .json, .yaml, etc.)
+        ext = path.suffix.lower()
         creator = self._creators.get(ext)
+
+        # Fallback to full name if suffix lookup fails (handles files like '.env')
+        if creator is None:
+            ext = path.name.lower()
+            creator = self._creators.get(ext)
+
         if creator is None:
             supported = ", ".join(sorted(self._creators.keys()))
             raise UnsupportedFormatError(
-                f"Format '{ext}' is not supported. Available: {supported}"
+                f"Format for '{path.name}' is not supported. Available: {supported}"
             )
         return creator
 

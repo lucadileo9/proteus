@@ -141,6 +141,15 @@ class TestLoadAndGet:
         mgr.load(str(path))
         assert mgr.get("DB_HOST") == "localhost"
 
+    def test_load_dot_env_file(self, tmp_path):
+        """load() correctly recognizes a file named exactly '.env'."""
+        path = tmp_path / ".env"
+        path.write_text("APP_NAME=DotEnv\n", encoding="utf-8")
+
+        mgr = ConfigurationManager()
+        mgr.load(str(path))
+        assert mgr.get("APP_NAME") == "DotEnv"
+
     def test_get_returns_dict(self):
         """get() returns the sub-dict when key points to a branch."""
         mgr = ConfigurationManager()
