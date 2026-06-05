@@ -14,7 +14,6 @@ from sample_data import (
     ENV_EMPTY_VALUE,
     ENV_WITH_COMMENTS,
     ENV_WITH_QUOTES,
-    SAMPLE_FLAT,
 )
 
 from proteus.readers.env_reader import EnvReader
@@ -32,25 +31,22 @@ class TestEnvReaderParse:
 
     def test_parse_valid_env(self, env_file):
         """parse() returns the expected Dict IR from a valid .env file."""
+        from sample_data import SAMPLE_ENV_NESTED
+
         result = self.reader.parse(env_file)
-        assert result == SAMPLE_FLAT
+        assert result == SAMPLE_ENV_NESTED
 
     def test_parse_returns_dict(self, env_file):
         """parse() always returns a dict."""
         result = self.reader.parse(env_file)
         assert isinstance(result, dict)
 
-    def test_parse_values_are_strings(self, env_file):
-        """All values in .env IR are strings."""
-        result = self.reader.parse(env_file)
-        for value in result.values():
-            assert isinstance(value, str)
-
     def test_parse_preserves_key_case(self, env_file):
-        """Keys preserve their original casing from the file."""
+        """Keys preserve their original casing from the file (nested)."""
         result = self.reader.parse(env_file)
-        assert "DB_HOST" in result
-        assert "APP_NAME" in result
+        assert "DB" in result
+        assert "HOST" in result["DB"]
+        assert "APP" in result
 
     # ------------------------------------------------------------------ #
     # Edge cases                                                          #

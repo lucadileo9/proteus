@@ -8,7 +8,9 @@ Exception Hierarchy:
     ConfigurationError (base)
     ├── UnsupportedFormatError
     ├── InvalidKeyError
-    └── ConfigurationNotLoadedError
+    ├── ConfigurationNotLoadedError
+    ├── ConfigurationTypeError
+    └── ConfigurationConflictError
 """
 
 
@@ -98,6 +100,19 @@ class ConfigurationTypeError(ConfigurationError):
     Example:
         >>> config.get('port', cast=int)  # where port is "abc"
         ConfigurationTypeError: Cannot cast value 'abc' for key 'port' to expected type.
+    """
+
+    pass
+
+
+class ConfigurationConflictError(ConfigurationError):
+    """
+    Raised when a structural conflict occurs during a set operation.
+
+    Example:
+        >>> config.set('a', 10)
+        >>> config.set('a.b', 5)  # Raises error: 'a' is a scalar, not a dict
+        ConfigurationConflictError: Cannot set 'a.b' because 'a' is not a dictionary.
     """
 
     pass

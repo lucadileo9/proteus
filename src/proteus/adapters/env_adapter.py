@@ -59,7 +59,8 @@ class EnvAdapter(BaseAdapter):
             raise ValueError(f"Invalid .env content: {exc}") from exc
 
         # dotenv_values may return None for keys with no assigned value
-        return {k: (v if v is not None else "") for k, v in parsed.items()}
+        flat = {k: (v if v is not None else "") for k, v in parsed.items()}
+        return self._unflatten(flat)
 
     def dump(self, data: Dict[str, Any]) -> str:
         """
@@ -110,6 +111,23 @@ class EnvAdapter(BaseAdapter):
                 result.update(self._flatten(value, prefix=full_key))
             else:
                 result[full_key] = str(value)
+        return result
+
+    def _unflatten(self, flat_dict: Dict[str, str]) -> Dict[str, Any]:
+        """
+        Reconstruct a nested dictionary from a flat dict using '__' separator.
+
+        'DATABASE__HOST=localhost' → {'DATABASE': {'HOST': 'localhost'}}
+        """
+        result: Dict[str, Any] = {}
+        for key, value in flat_dict.items():
+            parts = key.split("__")
+            target = result
+            for part in parts[:-1]:
+                if part not in target:
+                    target[part] = {}
+                target = target[part]
+            target[parts[-1]] = value
         return result
 
     @staticmethod

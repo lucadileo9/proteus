@@ -31,6 +31,7 @@ from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
 
 from .adapters.base import BaseAdapter
 from .exceptions import (
+    ConfigurationConflictError,
     ConfigurationNotLoadedError,
     ConfigurationTypeError,
     InvalidKeyError,
@@ -213,6 +214,58 @@ class ConfigurationManager:
         (values in the new file win on conflict).
         """
         self.load(filepath)
+
+    def set(self, key: str, value: Any) -> None:
+        """
+        Modify or add a configuration value using dot-notation.
+
+        Intermediate dictionaries are created automatically if they do
+        not exist.
+
+        Args:
+            key: Dot-separated key path (e.g. "database.port").
+            value: The value to set.
+
+        Raises:
+            InvalidKeyError: If the key is empty or malformed.
+            ConfigurationConflictError: If a part of the path exists but
+                is not a dictionary.
+        """
+        self._validate_key(key)
+        parts = key.split(".")
+        target = self._config
+
+        # Traverse to the second-to-last part
+        for i, part in enumerate(parts[:-1]):
+            if part not in target:
+                target[part] = {}
+            elif not isinstance(target[part], dict):
+                path_so_far = ".".join(parts[: i + 1])
+                raise ConfigurationConflictError(
+                    f"Cannot set '{key}' because '{path_so_far}' is not a dictionary."
+                )
+            target = target[part]
+
+        # Set the final value
+        target[parts[-1]] = value
+
+    def save(self, filepath: Union[str, Path]) -> None:
+        """
+        Persist the current internal configuration to a file.
+
+        The output format is determined by the file extension.
+
+        Args:
+            filepath: Destination file path.
+
+        Raises:
+            UnsupportedFormatError: Unknown file extension.
+            FileNotFoundError: Parent directory does not exist.
+            ValueError: Serialization failure.
+        """
+        creator = self._get_creator(filepath)
+        writer = creator.create_writer()
+        writer.write(self._config, filepath)
 
     def get(
         self,
