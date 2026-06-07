@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-06-07
+### Added
+- **Namespacing support**: `load()`, `merge()`, and `translate_and_load()` now accept an optional `namespace` parameter to inject configurations into a specific nested dot-notation path (e.g., `config.load("groups.json", namespace="telegram.groups")`).
+
 ## [1.0.1] - 2026-06-05
 ### Fixed
 - Improved file recognition to support files named exactly `.env` (without base name), ensuring seamless integration with standard environment files.
