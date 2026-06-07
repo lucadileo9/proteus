@@ -15,6 +15,7 @@ Proteus is a Python library that provides a clean, pattern-based approach to man
 
 - **Multi-format Support**: Load configurations from JSON, YAML, and TOML files seamlessly.
 - **Unified Interface**: Access all settings through a single, consistent API with dot-notation.
+- **Namespacing Support**: Inject configurations into specific nested paths to avoid collisions.
 - **Smart Merging**: Combine multiple configuration files with intelligent deep-merge.
 - **Translation Engine**: Convert configuration files between formats programmatically.
 - **Thread-Safe**: Optional singleton access via `ConfigurationManager.instance()`.
