@@ -191,17 +191,19 @@ class ConfigurationManager:
     # Facade — public API                                                 #
     # ------------------------------------------------------------------ #
 
-    def load(self, filepath: Union[str, Path]) -> None:
+    def load(self, filepath: Union[str, Path], namespace: Optional[str] = None) -> None:
         """
         Load a configuration file and deep-merge it into the IR.
 
         Args:
             filepath: Path to the configuration file.
+            namespace: Optional dot-notation path to inject the config into.
 
         Raises:
             UnsupportedFormatError: Unknown extension.
             FileNotFoundError: File does not exist.
             ValueError: Content cannot be parsed.
+            InvalidKeyError: If the namespace is malformed.
         """
         # select the appropriate FormatCreator based on the file extension
         creator = self._get_creator(filepath)
@@ -209,19 +211,34 @@ class ConfigurationManager:
         reader = creator.create_reader()
         # parse the file to get a new configuration dictionary
         new_config = reader.parse(filepath)
+
+        # Apply namespacing if requested
+        if namespace:
+            self._validate_key(namespace)
+            parts = namespace.split(".")
+            # Wrap the configuration in nested dictionaries from bottom up
+            for part in reversed(parts):
+                new_config = {part: new_config}
+
         # deep-merge the new configuration into the existing one
         self._config = self._deep_merge(self._config, new_config)
         # track the loaded file (store absolute path for clarity)
         self._loaded_files.append(str(Path(filepath).resolve()))
 
-    def merge(self, filepath: Union[str, Path]) -> None:
+    def merge(
+        self, filepath: Union[str, Path], namespace: Optional[str] = None
+    ) -> None:
         """
         Alias for ``load()`` — semantically clearer for explicit merges.
 
         Merges the contents of *filepath* on top of the current IR
         (values in the new file win on conflict).
+
+        Args:
+            filepath: Path to the configuration file.
+            namespace: Optional dot-notation path to inject the config into.
         """
-        self.load(filepath)
+        self.load(filepath, namespace=namespace)
 
     def set(self, key: str, value: Any) -> None:
         """
@@ -378,16 +395,24 @@ class ConfigurationManager:
         writer.write(data, output_path)
 
     def translate_and_load(
-        self, input_path: Union[str, Path], output_path: Union[str, Path]
+        self,
+        input_path: Union[str, Path],
+        output_path: Union[str, Path],
+        namespace: Optional[str] = None,
     ) -> None:
         """
         Translate a configuration file and then load the translated output.
 
         This is useful when you want the conversion result to become part of
         the manager state immediately after the file is written.
+
+        Args:
+            input_path: Path to the source file.
+            output_path: Path to the destination file.
+            namespace: Optional dot-notation path to inject the config into.
         """
         self.translate(input_path, output_path)
-        self.load(output_path)
+        self.load(output_path, namespace=namespace)
 
     # ------------------------------------------------------------------ #
     # Housekeeping                                                        #

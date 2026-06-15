@@ -311,15 +311,25 @@ class TestTypeCasting:
         env_file = tmp_path / "app.env"
         # .env loader flats strings, so all values are strings originally
         env_file.write_text(
-            "IS_ON=yes\nIS_OFF=0\nIS_FALSE=False\nIS_EMPTY=\n", encoding="utf-8"
+            "Y1=yes\nON=on\nY=y\nT=true\nONE=1\n"
+            "N1=no\nOFF=off\nN=n\nF=false\nZERO=0\nEMPTY=\n",
+            encoding="utf-8",
         )
         mgr = ConfigurationManager()
         mgr.load(str(env_file))
 
-        assert mgr.get("IS_ON", cast=bool) is True
-        assert mgr.get("IS_OFF", cast=bool) is False
-        assert mgr.get("IS_FALSE", cast=bool) is False
-        assert mgr.get("IS_EMPTY", cast=bool) is False
+        assert mgr.get("Y1", cast=bool) is True
+        assert mgr.get("ON", cast=bool) is True
+        assert mgr.get("Y", cast=bool) is True
+        assert mgr.get("T", cast=bool) is True
+        assert mgr.get("ONE", cast=bool) is True
+
+        assert mgr.get("N1", cast=bool) is False
+        assert mgr.get("OFF", cast=bool) is False
+        assert mgr.get("N", cast=bool) is False
+        assert mgr.get("F", cast=bool) is False
+        assert mgr.get("ZERO", cast=bool) is False
+        assert mgr.get("EMPTY", cast=bool) is False
 
     def test_failed_cast_raises_error(self, tmp_path):
         env_file = tmp_path / "app.env"

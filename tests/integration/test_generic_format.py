@@ -40,6 +40,19 @@ class TestRegisterAdapter:
         result = json.loads(dst.read_text(encoding="utf-8"))
         assert result == {"mock": "world"}
 
+    def test_register_and_translate_to_custom(self, tmp_path):
+        """Translate from native format to custom format."""
+        src = tmp_path / "input.json"
+        src.write_text('{"mock": "world"}')
+        dst = tmp_path / "output.mock"
+
+        mgr = ConfigurationManager()
+        mgr.register_adapter([".mock"], MockAdapter())
+
+        mgr.translate(str(src), str(dst))
+
+        assert dst.read_text(encoding="utf-8") == "MOCK|world"
+
     def test_register_multiple_extensions(self, tmp_path):
         p1 = tmp_path / "a.m1"
         p1.write_text("v1", encoding="utf-8")

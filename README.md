@@ -15,12 +15,32 @@ Proteus is a Python library that provides a clean, pattern-based approach to man
 
 - **Multi-format Support**: Load configurations from JSON, YAML, and TOML files seamlessly.
 - **Unified Interface**: Access all settings through a single, consistent API with dot-notation.
+- **Namespacing Support**: Inject configurations into specific nested paths to avoid collisions.
 - **Smart Merging**: Combine multiple configuration files with intelligent deep-merge.
 - **Translation Engine**: Convert configuration files between formats programmatically.
 - **Thread-Safe**: Optional singleton access via `ConfigurationManager.instance()`.
 - **Context Manager**: Use `with ConfigurationManager.temporary()` for isolated workspaces.
 - **Easily Extensible**: Add support for new formats with minimal code.
 - **Zero Heavy Dependencies**: Only requires `pyyaml` and `python-dotenv`.
+
+---
+
+## 🛠️ CLI
+
+Proteus comes with a built-in Command Line Interface for quick configuration tasks:
+
+```bash
+# Convert between formats
+proteus translate settings.env settings.json
+
+# Read a specific key
+proteus get config.yaml database.host
+
+# Merge multiple files into one
+proteus merge base.json prod.env --out final.toml
+```
+
+See [CLI Documentation](https://github.com/lucadileo9/proteus/blob/main/docs/cli.md) for more details.
 
 ---
 
@@ -37,9 +57,10 @@ pip install proteus-config
 ### Basic Usage
 
 ```python
-from proteus import ConfigurationManager
+from proteus import Proteus
+# or from proteus import ConfigurationManager
 
-config = ConfigurationManager()
+config = Proteus()
 config.load("examples/configs/app.yaml")
 
 print(config.get("app_name"))
@@ -47,7 +68,7 @@ print(config.get("database.host"))
 print(config.get("server.port"))
 ```
 
-For a shared application-wide instance, use `ConfigurationManager.instance()`.
+For a shared application-wide instance, use `Proteus.instance()`.
 
 For detailed and comprehensive examples covering all formats, see the [examples/](https://github.com/lucadileo9/proteus/tree/main/examples) directory.
 

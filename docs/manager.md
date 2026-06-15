@@ -67,20 +67,30 @@ sequenceDiagram
 
 ## Public API
 
-### `load(filepath: str | Path) → None`
+### `load(filepath: str | Path, namespace: Optional[str] = None) → None`
 
 Load a configuration file and **deep-merge** it into the current IR.
 Values from the new file win on conflict.
+
+If a `namespace` is provided (e.g. `"app.telegram"`), the contents of the file
+are injected under that nested path.
+
+| Parameter | Description |
+|-----------|-------------|
+| `filepath` | Path to the configuration file. |
+| `namespace` | (Optional) Dot-notation path to inject the config into. |
 
 | Raises | When |
 |--------|------|
 | `UnsupportedFormatError` | Unknown file extension. |
 | `FileNotFoundError` | File does not exist. |
 | `ValueError` | Content cannot be parsed. |
+| `InvalidKeyError` | The namespace is malformed. |
 
-### `merge(filepath: str | Path) → None`
+### `merge(filepath: str | Path, namespace: Optional[str] = None) → None`
 
 Alias for `load()` — semantically clearer when merging multiple sources.
+Supports the same `namespace` parameter.
 
 
 ### `set(key: str, value: Any) → None`
@@ -158,10 +168,11 @@ patterns collaborate:
 4. **Adapter** — `load()` / `dump()` inside readers/writers.
 5. **Optional Singleton** — the client can call this on `ConfigurationManager.instance()` if a shared manager is desired.
 
-### `translate_and_load(input_path: str | Path, output_path: str | Path) → None`
+### `translate_and_load(input_path: str | Path, output_path: str | Path, namespace: Optional[str] = None) → None`
 
 Translate a file and then load the translated output into the current IR.
 Use this when you want the converted file to become part of the manager state.
+Supports the `namespace` parameter for injected loading.
 
 
 ### `register_creator(creator: FormatCreator) → None`
