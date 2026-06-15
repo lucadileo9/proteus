@@ -25,6 +25,25 @@ Proteus is a Python library that provides a clean, pattern-based approach to man
 
 ---
 
+## 🛠️ CLI
+
+Proteus comes with a built-in Command Line Interface for quick configuration tasks:
+
+```bash
+# Convert between formats
+proteus translate settings.env settings.json
+
+# Read a specific key
+proteus get config.yaml database.host
+
+# Merge multiple files into one
+proteus merge base.json prod.env --out final.toml
+```
+
+See [CLI Documentation](https://github.com/lucadileo9/proteus/blob/main/docs/cli.md) for more details.
+
+---
+
 ## Quick Start
 
 ### Installation
@@ -38,9 +57,10 @@ pip install proteus-config
 ### Basic Usage
 
 ```python
-from proteus import ConfigurationManager
+from proteus import Proteus
+# or from proteus import ConfigurationManager
 
-config = ConfigurationManager()
+config = Proteus()
 config.load("examples/configs/app.yaml")
 
 print(config.get("app_name"))
@@ -48,7 +68,7 @@ print(config.get("database.host"))
 print(config.get("server.port"))
 ```
 
-For a shared application-wide instance, use `ConfigurationManager.instance()`.
+For a shared application-wide instance, use `Proteus.instance()`.
 
 For detailed and comprehensive examples covering all formats, see the [examples/](https://github.com/lucadileo9/proteus/tree/main/examples) directory.
 

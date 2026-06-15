@@ -7,19 +7,40 @@ This directory contains a series of numbered examples designed to take you from 
 - `01_basic_usage.py`: Loading single files and accessing values (Facade).
 - `02_merge_configs.py`: Deep-merging multiple sources (Layering).
 - `03_translate.py`: Cross-format translation (Full pattern collaboration).
+- `04_custom_format.py`: Extending Proteus with your own format.
+- `05_modify_and_save.py`: Mutability and persistence APIs.
+- `cli_demo.sh` / `cli_demo.ps1`: Full tour of the Command Line Interface.
 - `configs/`: Source configuration files in various formats.
-- `output/`: Generated files from the translation example.
+- `output/`: Generated files from the examples.
 
 ---
 
 ## 🚦 How to run the examples
 
+### Python Examples
 Run them directly from the project root using Python:
 
 ```bash
 python examples/01_basic_usage.py
 python examples/02_merge_configs.py
 python examples/03_translate.py
+python examples/04_custom_format.py
+python examples/05_modify_and_save.py
+```
+
+### CLI Demo
+To run the CLI demo, first ensure Proteus is installed in editable mode:
+```bash
+pip install -e .
+```
+
+Then run the script appropriate for your OS:
+```bash
+# Linux / macOS
+./examples/cli_demo.sh
+
+# Windows (PowerShell)
+.\examples\cli_demo.ps1
 ```
 
 ---
