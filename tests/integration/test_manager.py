@@ -690,3 +690,46 @@ class TestPackageImport:
         from proteus import ConfigurationManager
 
         assert ConfigurationManager is not None
+
+
+# ================================================================== #
+# load_environ()                                                      #
+# ================================================================== #
+
+
+class TestLoadEnviron:
+    """Test loading configuration from system environment variables."""
+
+    def test_load_environ_no_prefix(self, monkeypatch):
+        """load_environ() loads all environment variables by default."""
+        monkeypatch.setenv("DB__HOST", "env-host")
+        monkeypatch.setenv("DB__PORT", "9999")
+        monkeypatch.setenv("SIMPLE_KEY", "simple-val")
+
+        mgr = ConfigurationManager()
+        mgr.load_environ()
+
+        assert mgr.get("DB.HOST") == "env-host"
+        assert mgr.get("DB.PORT", cast=int) == 9999
+        assert mgr.get("SIMPLE_KEY") == "simple-val"
+
+    def test_load_environ_with_prefixes(self, monkeypatch):
+        """load_environ() only loads variables matching the specified prefixes."""
+        monkeypatch.setenv("APP__PORT", "8080")
+        monkeypatch.setenv("OTHER__VAR", "ignored")
+
+        mgr = ConfigurationManager()
+        mgr.load_environ(prefixes=["APP_"])
+
+        assert mgr.get("APP.PORT") == "8080"
+        assert mgr.get("OTHER.VAR") is None
+
+    def test_load_environ_trim_prefix(self, monkeypatch):
+        """load_environ() trims matched prefix if trim_prefix=True."""
+        monkeypatch.setenv("PREFIX__DB__HOST", "localhost")
+
+        mgr = ConfigurationManager()
+        mgr.load_environ(prefixes=["PREFIX__"], trim_prefix=True)
+
+        assert mgr.get("DB.HOST") == "localhost"
+        assert mgr.get("PREFIX.DB.HOST") is None

@@ -225,6 +225,55 @@ class ConfigurationManager:
         # track the loaded file (store absolute path for clarity)
         self._loaded_files.append(str(Path(filepath).resolve()))
 
+    def load_environ(
+        self,
+        prefixes: Optional[List[str]] = None,
+        trim_prefix: bool = False,
+    ) -> None:
+        """
+        Load environment variables from os.environ into the configuration.
+
+        Uses ``EnvAdapter`` to reconstruct nested dictionaries from keys
+        containing ``__`` (double underscores).
+
+        Args:
+            prefixes: Optional list of prefixes to filter environment variables
+            (e.g. ``["NOTION_", "TELEGRAM_"]``).
+            trim_prefix: If True and *prefixes* are provided,
+            the matched prefix is removed from the key name.
+        """
+        import os
+
+        from .adapters.env_adapter import EnvAdapter
+
+        # 1. Filtra e raccoglie le variabili d'ambiente di sistema
+        flat_env: Dict[str, str] = {}
+        for key, value in os.environ.items():
+            matched_prefix = None
+            if prefixes is not None:
+                for prefix in prefixes:
+                    if key.startswith(prefix):
+                        matched_prefix = prefix
+                        break
+                if matched_prefix is None:
+                    # Ignora le variabili che non hanno nessuno dei prefissi richiesti
+                    continue
+
+            # 2. Rimuove il prefisso (Trimming) se richiesto
+            target_key = key
+            if trim_prefix and matched_prefix is not None:
+                target_key = key[len(matched_prefix) :]
+
+            flat_env[target_key] = value
+
+        # 3. Ricostruisce la struttura nidificata se sono state trovate variabili
+        if flat_env:
+            adapter = EnvAdapter()
+            nested_data = adapter._unflatten(flat_env)
+
+            # 4. Unisce i dati nidificati con la configurazione principale di Proteus
+            self._config = self._deep_merge(self._config, nested_data)
+
     def merge(
         self, filepath: Union[str, Path], namespace: Optional[str] = None
     ) -> None:
