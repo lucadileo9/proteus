@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-06-24
+### Added
+- **Native OS Environment Variable loading**: added `load_environ(prefixes, trim_prefix)` method to `ConfigurationManager` to easily filter, unflatten, and load system environment variables (useful in Docker/Kubernetes container deployments).
+
 ## [1.1.0] - 2026-06-05
 ### Added
 - Stateless Command Line Interface (CLI) accessible via the `proteus` command.

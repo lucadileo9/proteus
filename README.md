@@ -70,6 +70,22 @@ print(config.get("server.port"))
 
 For a shared application-wide instance, use `Proteus.instance()`.
 
+### Loading OS Environment Variables
+
+For containerized or production environments (like Docker or Kubernetes) where configurations are passed as system environment variables, you can load them directly using `load_environ`:
+
+```python
+from proteus import Proteus
+
+config = Proteus()
+
+# Load OS environment variables starting with specified prefixes
+config.load_environ(prefixes=["DATABASE_", "APP_"])
+
+# Environment variables like DATABASE__HOST=localhost are automatically nested
+print(config.get("DATABASE.HOST"))  # Prints 'localhost'
+```
+
 For detailed and comprehensive examples covering all formats, see the [examples/](https://github.com/lucadileo9/proteus/tree/main/examples) directory.
 
 ---
